@@ -5,16 +5,16 @@
 @tailwind utilities;
 
 :root {
-  --brand-rose: #C4616A;
-  --brand-plum: #4A2040;
-  --brand-cream: #FAF7F2;
-  --brand-blush: #F5EDE8;
-  --brand-ink: #2D2A26;
-  --brand-muted: #6B6560;
-  --brand-gold: #C9A96E;
-  --brand-sage: #7B9E7B;
-  --brand-coral: #E8634A;
-  --brand-border: #E8E5DF;
+  --brand-amber: #C8860A;
+  --brand-brown: #3D2314;
+  --brand-cream: #FBF6EF;
+  --brand-sand: #F0E6D6;
+  --brand-ink: #2C1810;
+  --brand-muted: #7A6B5D;
+  --brand-forest: #4A6741;
+  --brand-honey: #E8B84A;
+  --brand-terracotta: #B85C38;
+  --brand-border: #E5D9C8;
 }
 
 body {
@@ -27,7 +27,7 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--brand-rose) var(--brand-cream);
+  scrollbar-color: var(--brand-amber) var(--brand-cream);
 }
 
 *::-webkit-scrollbar {
@@ -39,7 +39,7 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: var(--brand-rose);
+  background-color: var(--brand-amber);
   border-radius: 3px;
 }
 
@@ -49,17 +49,14 @@ body {
   }
 }
 
-/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom checkbox/radio for checkout */
 input[type="radio"]:checked {
-  accent-color: var(--brand-rose);
+  accent-color: var(--brand-amber);
 }
 
-/* Animation for add to cart */
 @keyframes cartBounce {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.2); }
@@ -69,7 +66,6 @@ input[type="radio"]:checked {
   animation: cartBounce 0.3s ease-in-out;
 }
 
-/* Pulse for urgency */
 @keyframes urgencyPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
@@ -79,11 +75,14 @@ input[type="radio"]:checked {
   animation: urgencyPulse 2s ease-in-out infinite;
 }
 
-/* Progress bar animation */
 @keyframes progressFill {
   from { width: 0%; }
 }
 
 .progress-fill {
   animation: progressFill 1s ease-out;
+}
+
+.product-jar {
+  background: linear-gradient(135deg, #F0E6D6 0%, #E8D5B5 50%, #D4B896 100%);
 }

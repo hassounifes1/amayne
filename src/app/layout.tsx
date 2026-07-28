@@ -6,12 +6,12 @@ import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 
 export const metadata: Metadata = {
-  title: 'AMAYNE — La Mode Qui Te Mérite | Grande Taille Femme Maroc',
-  description: 'AMAYNE, la première marque marocaine dédiée aux femmes grande taille (46-56). Robes, ensembles, hauts et pantalons élégants. Livraison gratuite, paiement à la livraison.',
-  keywords: 'grande taille femme maroc, vêtements femme 46 48 50 52 54 56, mode plus size maroc, robe grande taille maroc, AMAYNE',
+  title: 'AMAYNO — Amlou Authentique du Souss | Livraison Gratuite Maroc',
+  description: 'AMAYNO, l\'amlou 100% naturel du Maroc. Amandes, argan et miel — livré chez toi partout au Maroc. Paiement à la livraison. Sans conservateurs, sans huile de palme.',
+  keywords: 'amlou maroc, amlou amandes, pâte à tartiner naturelle, amlou livraison maroc, amlou bio, AMAYNO, amlou argan miel',
   openGraph: {
-    title: 'AMAYNE — La Mode Qui Te Mérite',
-    description: 'La première marque marocaine dédiée aux femmes grande taille. Livraison gratuite partout au Maroc.',
+    title: 'AMAYNO — L\'Amlou Authentique du Souss',
+    description: '100% naturel. Fabriqué au Maroc. Livraison gratuite. Paiement à la livraison.',
     type: 'website',
     locale: 'fr_MA',
   },

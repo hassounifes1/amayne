@@ -5,9 +5,9 @@ import { CartItem, Product } from './data';
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, size: number, color: string) => void;
-  removeItem: (productId: string, size: number, color: string) => void;
-  updateQuantity: (productId: string, size: number, color: string, quantity: number) => void;
+  addItem: (product: Product, weight: number, quantity?: number) => void;
+  removeItem: (productId: string, weight: number) => void;
+  updateQuantity: (productId: string, weight: number, quantity: number) => void;
   clearCart: () => void;
   total: number;
   itemCount: number;
@@ -21,37 +21,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const addItem = useCallback((product: Product, size: number, color: string) => {
+  const addItem = useCallback((product: Product, weight: number, quantity = 1) => {
     setItems(prev => {
       const existing = prev.find(
-        i => i.product.id === product.id && i.size === size && i.color === color
+        i => i.product.id === product.id && i.weight === weight
       );
       if (existing) {
         return prev.map(i =>
-          i.product.id === product.id && i.size === size && i.color === color
-            ? { ...i, quantity: i.quantity + 1 }
+          i.product.id === product.id && i.weight === weight
+            ? { ...i, quantity: i.quantity + quantity }
             : i
         );
       }
-      return [...prev, { product, size, color, quantity: 1 }];
+      return [...prev, { product, weight, quantity }];
     });
     setIsOpen(true);
   }, []);
 
-  const removeItem = useCallback((productId: string, size: number, color: string) => {
+  const removeItem = useCallback((productId: string, weight: number) => {
     setItems(prev => prev.filter(
-      i => !(i.product.id === productId && i.size === size && i.color === color)
+      i => !(i.product.id === productId && i.weight === weight)
     ));
   }, []);
 
-  const updateQuantity = useCallback((productId: string, size: number, color: string, quantity: number) => {
+  const updateQuantity = useCallback((productId: string, weight: number, quantity: number) => {
     if (quantity <= 0) {
-      removeItem(productId, size, color);
+      removeItem(productId, weight);
       return;
     }
     setItems(prev =>
       prev.map(i =>
-        i.product.id === productId && i.size === size && i.color === color
+        i.product.id === productId && i.weight === weight
           ? { ...i, quantity }
           : i
       )
@@ -60,7 +60,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => setItems([]), []);
 
-  const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const total = items.reduce((sum, item) => {
+    const w = item.product.weights.find(w => w.grams === item.weight);
+    const unitPrice = w?.price ?? item.product.price;
+    return sum + unitPrice * item.quantity;
+  }, 0);
+
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (

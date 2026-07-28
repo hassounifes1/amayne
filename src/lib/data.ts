@@ -10,10 +10,8 @@ export interface Product {
   originalPrice?: number;
   description: string;
   benefits: string[];
-  material: string;
-  care: string;
-  colors: { name: string; hex: string }[];
-  sizes: number[];
+  ingredients: string;
+  weights: { label: string; grams: number; price: number }[];
   images: string[];
   rating: number;
   reviewCount: number;
@@ -21,13 +19,15 @@ export interface Product {
   isNew?: boolean;
   isBestseller?: boolean;
   crossSellIds: string[];
+  upsellId?: string;
+  downsellId?: string;
   painPoint: string;
+  emoji: string;
 }
 
 export interface CartItem {
   product: Product;
-  size: number;
-  color: string;
+  weight: number;
   quantity: number;
 }
 
@@ -36,568 +36,449 @@ export interface Order {
   items: CartItem[];
   name: string;
   phone: string;
-  email?: string;
   city: string;
-  address: string;
-  landmark?: string;
   total: number;
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered';
   createdAt: string;
 }
 
+export const CITIES = [
+  'Casablanca', 'Rabat', 'Marrakech', 'Tanger', 'Fes', 'Agadir',
+  'Meknès', 'Oujda', 'Kenitra', 'Tetouan', 'Salé', 'Nador', 'Autre',
+];
+
 export const products: Product[] = [
   {
     id: '1',
-    slug: 'lelegance-robe-longue-satinee',
-    name: 'Robe Longue Satinée',
-    marketingName: "L'Élégance",
-    type: 'Robe',
-    category: 'robes',
-    collection: 'Robes Élégantes',
-    price: 399,
-    originalPrice: 549,
-    description: "L'Élégance n'est pas qu'une robe — c'est une déclaration. Conçue pour les femmes qui refusent de compromettre entre style et confort, cette robe longue en satin premium épouse vos courbes sans les comprimer.",
+    slug: 'lorigine-amlou-beldi-amandes',
+    name: 'Amlou Beldi Amandes & Miel',
+    marketingName: "L'Origine",
+    type: 'Amlou Classique',
+    category: 'classiques',
+    collection: 'Classiques',
+    price: 79,
+    originalPrice: 99,
+    description: "L'Origine, c'est l'amlou comme ta grand-mère du Souss le préparait. Amandes torréfiées à la main, huile d'argan pressée à froid, miel pur du Maroc — trois ingrédients, zéro compromis. Pas de Nutella. Pas d'huile de palme. Juste la tradition.",
     benefits: [
-      'Coupe fluide qui épouse sans serrer',
-      'Tissu satiné premium qui ne transparent pas',
-      'Poches fonctionnelles cachées dans les coutures',
-      'Doublure intégrale pour plus de confort'
+      'Énergie naturelle durable — idéal au petit-déjeuner',
+      'Riche en vitamine E et acides gras essentiels de l\'argan',
+      '100% naturel — sans conservateurs, sans sucre ajouté',
+      'Fabriqué au Souss par des coopératives féminines',
     ],
-    material: 'Satin de soie artificielle (100% Polyester)',
-    care: 'Lavage machine à 30°, séchage à l\'ombre, repassage à basse température',
-    colors: [
-      { name: 'Noir', hex: '#1a1a1a' },
-      { name: 'Bordeaux', hex: '#722F37' },
-      { name: 'Beige Doré', hex: '#D4B896' },
-      { name: 'Rose Poudré', hex: '#D4A5A5' }
+    ingredients: 'Amandes du Souss (65%), huile d\'argan alimentaire bio (25%), miel naturel du Maroc (10%)',
+    weights: [
+      { label: '190g', grams: 190, price: 79 },
+      { label: '350g', grams: 350, price: 129 },
+      { label: '700g', grams: 700, price: 199 },
     ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/robe-elegance-1.jpg', '/images/products/robe-elegance-2.jpg'],
-    rating: 4.8,
-    reviewCount: 127,
+    images: ['/images/products/origine.jpg'],
+    rating: 4.9,
+    reviewCount: 847,
     inStock: true,
-    isNew: true,
+    isNew: false,
     isBestseller: true,
-    crossSellIds: ['3', '5', '8'],
-    painPoint: 'Tu ne trouves jamais de robe longue qui va bien en grande taille'
+    crossSellIds: ['4', '11', '2'],
+    upsellId: '10',
+    downsellId: '2',
+    painPoint: 'Tu manges du Nutella plein de sucre et d\'huile de palme — ton corps mérite mieux',
+    emoji: '🫙',
   },
   {
     id: '2',
-    slug: 'la-serenite-robe-lin',
-    name: 'Robe en Lin Froissé',
-    marketingName: 'La Sérenité',
-    type: 'Robe',
-    category: 'robes',
-    collection: 'Robes Élégantes',
-    price: 449,
-    originalPrice: 599,
-    description: 'La Sérenité, c\'est le repos que ton corps mérite. En lin naturel froissé, elle offre un confort absolu tout en restant élégante — perfecte pour les journées chaudes au Maroc.',
+    slug: 'laforce-amlou-cacahuetes',
+    name: 'Amlou Cacahuètes Traditionnel',
+    marketingName: 'La Force',
+    type: 'Amlou Cacahuètes',
+    category: 'classiques',
+    collection: 'Classiques',
+    price: 57,
+    originalPrice: 75,
+    description: 'La Force, c\'est l\'énergie du peuple berbère à prix accessible. Cacahuètes torréfiées, argan et miel — le petit-déjeuner des champions sans te ruiner. Parfait pour toute la famille.',
     benefits: [
-      'Lin naturel respirant, idéal pour le climat marocain',
-      'Coupe ample qui laisse le corps respirer',
-      'Texture froissé qui ne nécessite pas de repassage',
-      'Poches profondes pour ta practicité au quotidien'
+      'Prix accessible sans sacrifier la qualité',
+      'Riche en protéines végétales pour l\'énergie matinale',
+      'Texture crémeuse, goût authentique du Maroc central',
+      'Format familial économique',
     ],
-    material: 'Lin naturel (70% Lin, 30% Coton)',
-    care: 'Lavage machine à 30°, ne pas javelliser, séchage à l\'ombre',
-    colors: [
-      { name: 'Beige Naturel', hex: '#C4B49A' },
-      { name: 'Vert Sauge', hex: '#9CAF88' },
-      { name: 'Mauve Clair', hex: '#C8A2C8' }
+    ingredients: 'Cacahuètes torréfiées (70%), huile d\'argan alimentaire (20%), miel naturel (10%)',
+    weights: [
+      { label: '190g', grams: 190, price: 57 },
+      { label: '350g', grams: 350, price: 89 },
     ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/robe-serenite-1.jpg', '/images/products/robe-serenite-2.jpg'],
-    rating: 4.9,
-    reviewCount: 89,
+    images: ['/images/products/force.jpg'],
+    rating: 4.7,
+    reviewCount: 623,
     inStock: true,
-    isNew: false,
     isBestseller: true,
-    crossSellIds: ['5', '7', '9'],
-    painPoint: 'Les robes en lin sont toujours trop étroites ou trop courtes'
+    crossSellIds: ['1', '9', '11'],
+    upsellId: '1',
+    painPoint: 'Tu veux de l\'énergie naturelle sans te ruiner — l\'amlou du souk te fait douter',
+    emoji: '🥜',
   },
   {
     id: '3',
-    slug: 'la-confiance-ensemble-2-pieces',
-    name: 'Ensemble 2 Pièces Tunique + Pantalon',
-    marketingName: 'La Confiance',
-    type: 'Ensemble',
-    category: 'ensembles',
-    collection: 'Ensembles & Sets',
-    price: 499,
-    originalPrice: 699,
-    description: 'La Confiance, c\'est de sortir de chez toi en sachant que tout est parfait. Cet ensemble 2 pièces combine une tunique fluide et un pantalon ajusté — un look complet en une seule pièce.',
+    slug: 'lereveil-amlou-light',
+    name: 'Amlou Light Sans Sucre Ajouté',
+    marketingName: 'Le Réveil',
+    type: 'Amlou Light',
+    category: 'sante',
+    collection: 'Santé & Light',
+    price: 80,
+    originalPrice: 99,
+    description: 'Le Réveil, c\'est le plaisir de l\'amlou sans culpabilité. Sans sucre ajouté, sans miel — juste amandes torréfiées et huile d\'argan pure. Pour celles et ceux qui surveillent leur glycémie mais refusent de renoncer au goût.',
     benefits: [
-      'Look complet sans effort de coordination',
-      'Tunique à manches longues avec détails brodés',
-      'Pantalon à taille haute ajustable pour plus de confort',
-      'Tissu extensible qui bouge avec toi'
+      'Index glycémique bas — adapté aux diabétiques',
+      'Zéro sucre ajouté, zéro miel',
+      'Même texture onctueuse que l\'amlou traditionnel',
+      'Riche en bonnes graisses et protéines',
     ],
-    material: 'Coton extensible (95% Coton, 5% Élasthanne)',
-    care: 'Lavage machine à 30°, pas de séchage en machine',
-    colors: [
-      { name: 'Marine', hex: '#1B2A4A' },
-      { name: 'Noir', hex: '#1a1a1a' },
-      { name: 'Vert Sauge', hex: '#9CAF88' }
+    ingredients: 'Amandes torréfiées (80%), huile d\'argan alimentaire bio (20%)',
+    weights: [
+      { label: '190g', grams: 190, price: 80 },
+      { label: '350g', grams: 350, price: 135 },
     ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/ensemble-confiance-1.jpg', '/images/products/ensemble-confiance-2.jpg'],
-    rating: 4.7,
-    reviewCount: 203,
+    images: ['/images/products/reveil.jpg'],
+    rating: 4.8,
+    reviewCount: 412,
     inStock: true,
-    isNew: false,
-    isBestseller: true,
-    crossSellIds: ['1', '5', '10'],
-    painPoint: 'Tu veux un look complet mais tu dois tout combiner toi-même'
+    isNew: true,
+    isBestseller: false,
+    crossSellIds: ['5', '1', '10'],
+    upsellId: '1',
+    downsellId: '2',
+    painPoint: 'Tu surveilles ta glycémie mais tu veux te faire plaisir au petit-déjeuner',
+    emoji: '🌿',
   },
   {
     id: '4',
-    slug: 'laudace-tunique-brodee',
-    name: 'Tunique Brodée',
-    marketingName: "L'Audace",
-    type: 'Tunique',
-    category: 'hauts',
-    collection: 'Hauts & Tuniques',
-    price: 299,
-    originalPrice: 399,
-    description: "L'Audace, c'est de porter quelque chose qui te ressemble. Cette tunique brodée à la main est un hommage au savoir-faire marocain, adaptée pour les femmes qui osent se démarquer.",
+    slug: 'lindulgence-amlou-chocolat-noir',
+    name: 'Amlou Chocolat Noir 70%',
+    marketingName: "L'Indulgence",
+    type: 'Amlou Chocolat',
+    category: 'gourmand',
+    collection: 'Gourmand',
+    price: 80,
+    originalPrice: 105,
+    description: "L'Indulgence, c'est quand l'amlou rencontre le cacao Valrhona. Chocolat noir 70% sans sucre ajouté, amandes et argan — le goût du Nutella pour adultes exigeants. Gourmandise sans compromis.",
     benefits: [
-      'Broderie artisanale marocaine à la main',
-      'Coupe A qui flotte gracieusement',
-      'Col V échancré pour un look élégant',
-      'Manches 3/4 avec détails brodés'
+      'Cacao Valrhona 70% — qualité pâtissière',
+      'Antioxydants du chocolat noir + vitamine E de l\'argan',
+      'Sans sucre ajouté — sucré naturellement par le miel',
+      'Parfait sur crêpes, msemen et gaufres',
     ],
-    material: 'Coton premium (100% Coton)',
-    care: 'Lavage délicat à 30°, repassage à l\'envers',
-    colors: [
-      { name: 'Blanc Crème', hex: '#F5F0E6' },
-      { name: 'Bordeaux', hex: '#722F37' },
-      { name: 'Noir', hex: '#1a1a1a' }
+    ingredients: 'Amandes (55%), cacao noir Valrhona 70% (15%), huile d\'argan (20%), miel naturel (10%)',
+    weights: [
+      { label: '190g', grams: 190, price: 80 },
+      { label: '350g', grams: 350, price: 139 },
     ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/tunique-audace-1.jpg', '/images/products/tunique-audace-2.jpg'],
-    rating: 4.6,
-    reviewCount: 156,
+    images: ['/images/products/indulgence.jpg'],
+    rating: 4.9,
+    reviewCount: 534,
     inStock: true,
-    isNew: true,
-    isBestseller: false,
-    crossSellIds: ['6', '8', '10'],
-    painPoint: 'Les tuniques sont soit trop courtes, soit vieillottes en grande taille'
+    isBestseller: true,
+    crossSellIds: ['5', '8', '1'],
+    upsellId: '6',
+    downsellId: '1',
+    painPoint: 'Tu veux du chocolat gourmand sans la culpabilité du Nutella industriel',
+    emoji: '🍫',
   },
   {
     id: '5',
-    slug: 'lapuissance-pantalon-taille-haute',
-    name: 'Pantalon Taille Haute',
-    marketingName: 'La Puissance',
-    type: 'Pantalon',
-    category: 'pantalons',
-    collection: 'Pantalons & Jupes',
-    price: 249,
-    originalPrice: 329,
-    description: 'La Puissance, c\'est de marcher dans la rue en sachant que ton pantalon reste en place toute la journée. Taille haute, coupe ajustée, et ceinture élastique invisible — c\'est la fin des mauvaises surprises.',
+    slug: 'ladouceur-amlou-chocolat-light',
+    name: 'Amlou Chocolat Noir Light',
+    marketingName: 'La Douceur',
+    type: 'Amlou Chocolat Light',
+    category: 'gourmand',
+    collection: 'Gourmand',
+    price: 82,
+    originalPrice: 105,
+    description: 'La Douceur, c\'est l\'Indulgence allégée. Chocolat noir et amlou light réunis — le meilleur des deux mondes pour toute la famille. Les enfants adorent, les parents approuvent.',
     benefits: [
-      'Taille haute qui reste en place toute la journée',
-      'Ceinture élastique invisible pour un look propre',
-      'Tissu extensible qui ne marque pas',
-      'Coupe droite qui allonge la silhouette'
+      'Version allégée du chocolat noir — moins calorique',
+      'Plaisir gourmand pour petits et grands',
+      'Parfait en goûter après l\'école',
+      'Ingrédients 100% naturels',
     ],
-    material: 'Coton stretch (97% Coton, 3% Élasthanne)',
-    care: 'Lavage machine à 30°, séchage en machine autorisé',
-    colors: [
-      { name: 'Noir', hex: '#1a1a1a' },
-      { name: 'Marine', hex: '#1B2A4A' },
-      { name: 'Gris Anthracite', hex: '#36454F' }
+    ingredients: 'Amandes light (60%), cacao noir (12%), huile d\'argan (20%), miel (8%)',
+    weights: [
+      { label: '190g', grams: 190, price: 82 },
+      { label: '350g', grams: 350, price: 142 },
     ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/pantalon-puissance-1.jpg', '/images/products/pantalon-puissance-2.jpg'],
-    rating: 4.8,
-    reviewCount: 312,
+    images: ['/images/products/douceur.jpg'],
+    rating: 4.7,
+    reviewCount: 298,
     inStock: true,
-    isNew: false,
-    isBestseller: true,
-    crossSellIds: ['4', '1', '7'],
-    painPoint: 'Les pantalons ne passent pas ou glissent sans cesse'
+    crossSellIds: ['4', '1', '11'],
+    upsellId: '4',
+    downsellId: '1',
+    painPoint: 'Tes enfants veulent du goût, toi tu veux de la qualité — impossible de concilier ?',
+    emoji: '🍯',
   },
   {
     id: '6',
-    slug: 'lafluidite-pantalon-wide-leg',
-    name: 'Pantalon Wide Leg Lin',
-    marketingName: 'La Fluidité',
-    type: 'Pantalon',
-    category: 'pantalons',
-    collection: 'Pantalons & Jupes',
-    price: 299,
-    originalPrice: 399,
-    description: 'La Fluidité, c\'est de se sentir légère même quand le thermomètre monte. Ce pantalon wide leg en lin est ton allié pour les journées chaudes — chic, confortable, et parfaitement marocain.',
+    slug: 'letresor-amlou-pistache',
+    name: 'Amlou Pistache Premium',
+    marketingName: 'Le Trésor',
+    type: 'Amlou Pistache',
+    category: 'premium',
+    collection: 'Premium',
+    price: 129,
+    originalPrice: 169,
+    description: 'Le Trésor, c\'est l\'amlou réinventé au sommet du luxe. Pistaches du Souss torréfiées, argan bio et miel d\'acacia — une texture veloutée et un goût qui ne ressemble à rien d\'autre. Le cadeau parfait.',
     benefits: [
-      'Lin naturel qui régule la température',
-      'Coupe wide leg pour une circulation d\'air maximale',
-      'Taille élastique avec cordon d\'ajustement',
-      'Poches latérales profondes'
+      'Pistaches premium torréfiées à la main (76%)',
+      'Texture la plus onctueuse de notre gamme',
+      'Idéal en cadeau — coffret disponible',
+      'Riche en fer, magnésium et protéines',
     ],
-    material: 'Lin naturel (100% Lin)',
-    care: 'Lavage machine à 30°, ne pas javelliser',
-    colors: [
-      { name: 'Beige Naturel', hex: '#C4B49A' },
-      { name: 'Blanc', hex: '#FFFFFF' },
-      { name: 'Noir', hex: '#1a1a1a' }
+    ingredients: 'Pistaches du Souss (76%), amandes (24%), huile d\'argan bio, miel d\'acacia',
+    weights: [
+      { label: '190g', grams: 190, price: 129 },
+      { label: '350g', grams: 350, price: 219 },
     ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/pantalon-fluidite-1.jpg', '/images/products/pantalon-fluidite-2.jpg'],
-    rating: 4.7,
-    reviewCount: 98,
+    images: ['/images/products/tresor.jpg'],
+    rating: 5.0,
+    reviewCount: 187,
     inStock: true,
     isNew: true,
     isBestseller: false,
-    crossSellIds: ['4', '1', '9'],
-    painPoint: 'Les pantalons en lin sont toujours trop serrés aux cuisses'
+    crossSellIds: ['7', '10', '11'],
+    upsellId: '11',
+    downsellId: '1',
+    painPoint: 'Tu cherches un cadeau unique et premium — pas un pot de Nutella emballé',
+    emoji: '💎',
   },
   {
     id: '7',
-    slug: 'lecharme-robe-wrap-florale',
-    name: 'Robe Wrap Florale',
-    marketingName: 'Le Charme',
-    type: 'Robe',
-    category: 'robes',
-    collection: 'Robes Élégantes',
-    price: 379,
-    originalPrice: 499,
-    description: 'Le Charme, c\'est de te sentir belle sans effort. Cette robe wrap à imprimé floral est conçue pour épouser tes courbes naturellement — pas de fermeture, pas de stress, juste élégance.',
+    slug: 'lenergie-amlou-cajou-dattes',
+    name: 'Amlou Cajou & Dattes',
+    marketingName: "L'Énergie",
+    type: 'Amlou Cajou',
+    category: 'premium',
+    collection: 'Premium',
+    price: 93,
+    originalPrice: 119,
+    description: "L'Énergie, c'est le super-petit-déjeuner des sportifs et des travailleurs acharnés. Noix de cajou, dattes Medjool et argan — un shot naturel de force pour affronter ta journée.",
     benefits: [
-      'Style wrap qui s\'ajuste à toutes les morphologies',
-      'Imprimé floral exclusif AMAYNE',
-      'Tissu fluide qui ne marque pas',
-      'Manches volants pour touche féminine'
+      'Dattes Medjool pour énergie rapide et durable',
+      'Cajou riche en magnésium et zinc',
+      'Parfait avant le sport ou en collation de 16h',
+      'Sucrant 100% naturel — pas de sucre raffiné',
     ],
-    material: 'Viscose premium (100% Viscose)',
-    care: 'Lavage main recommandé, séchage à l\'ombre',
-    colors: [
-      { name: 'Floral Rose', hex: '#E8A0A5' },
-      { name: 'Floral Bleu', hex: '#89CFF0' }
+    ingredients: 'Noix de cajou (50%), dattes Medjool (20%), huile d\'argan bio (20%), miel (10%)',
+    weights: [
+      { label: '190g', grams: 190, price: 93 },
+      { label: '350g', grams: 350, price: 159 },
     ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/robe-charme-1.jpg', '/images/products/robe-charme-2.jpg'],
-    rating: 4.9,
-    reviewCount: 74,
+    images: ['/images/products/energie.jpg'],
+    rating: 4.8,
+    reviewCount: 356,
     inStock: true,
-    isNew: false,
-    isBestseller: false,
-    crossSellIds: ['5', '9', '10'],
-    painPoint: 'Les robes wrap sont impossibles à trouver au-dessus du 44'
+    isBestseller: true,
+    crossSellIds: ['1', '6', '3'],
+    upsellId: '6',
+    downsellId: '2',
+    painPoint: 'Tu manques d\'énergie au sport, au travail ou en fin de journée de ramadan',
+    emoji: '⚡',
   },
   {
     id: '8',
-    slug: 'leraffinement-veste-daim',
-    name: 'Veste en Daim',
-    marketingName: 'Le Raffinement',
-    type: 'Veste',
-    category: 'manteaux',
-    collection: 'Manteaux & Vestes',
-    price: 449,
-    originalPrice: 599,
-    description: 'Le Raffinement, c\'est de transformer n\'importe quelle tenue en look haut de gamme. Cette veste en daim est le pièce maîtresse de ta garde-robe — elle va avec tout et elevate tout.',
+    slug: 'lagourmandise-amlou-noisettes-chocolat',
+    name: 'Amlou Noisettes & Chocolat',
+    marketingName: 'La Gourmandise',
+    type: 'Amlou Noisettes',
+    category: 'gourmand',
+    collection: 'Gourmand',
+    price: 96,
+    originalPrice: 125,
+    description: 'La Gourmandise, c\'est la rencontre des noisettes du Rif et du cacao Valrhona. Un amlou gourmand qui transforme ton pain grillé en dessert. Les voisins vont te demander la recette.',
     benefits: [
-      'Daim premium qui ne peluche pas',
-      'Coupe structurée qui affine la silhouette',
-      'Doublure intérieure pour plus de confort',
-      'Boutons dorés pour touche luxe'
+      'Noisettes torréfiées du Rif — arôme intense',
+      'Cacao Valrhona sans sucre ajouté',
+      'Parfait pour pâtisseries, brownies et smoothies',
+      'Texture granuleuse authentique — signe de qualité',
     ],
-    material: 'Daim synthétique premium (100% Polyester)',
-    care: 'Nettoyage à sec recommandé',
-    colors: [
-      { name: 'Marron Cognac', hex: '#8B4513' },
-      { name: 'Noir', hex: '#1a1a1a' }
+    ingredients: 'Noisettes du Rif (60%), huile d\'argan (20%), cacao Valrhona (10%), miel (10%)',
+    weights: [
+      { label: '190g', grams: 190, price: 96 },
+      { label: '350g', grams: 350, price: 165 },
     ],
-    sizes: [46, 48, 50, 52, 54],
-    images: ['/images/products/veste-raffinement-1.jpg', '/images/products/veste-raffinement-2.jpg'],
-    rating: 4.6,
-    reviewCount: 67,
+    images: ['/images/products/gourmandise.jpg'],
+    rating: 4.8,
+    reviewCount: 267,
     inStock: true,
-    isNew: false,
-    isBestseller: false,
-    crossSellIds: ['5', '1', '3'],
-    painPoint: 'Les vestes sont toujours trop serrées aux épaules et trop courtes'
+    crossSellIds: ['4', '5', '1'],
+    upsellId: '6',
+    downsellId: '4',
+    painPoint: 'Tu veux impressionner tes invités avec un petit-déjeuner d\'exception',
+    emoji: '🌰',
   },
   {
     id: '9',
-    slug: 'lesprit-chemise-oversize',
-    name: 'Chemise Oversize Popeline',
-    marketingName: "L'Esprit",
-    type: 'Chemise',
-    category: 'hauts',
-    collection: 'Hauts & Tuniques',
-    price: 279,
-    originalPrice: 359,
-    description: "L'Esprit, c'est de porter une chemise sans avoir peur qu'elle se déchire aux coutures. Cette chemise oversize en popeline premium est ta nouvelle favorite — du bureau au café, elle suit partout.",
+    slug: 'leclassique-amlou-cacahuetes-sel',
+    name: 'Amlou Cacahuètes & Fleur de Sel',
+    marketingName: 'Le Classique',
+    type: 'Amlou Salé-Sucré',
+    category: 'classiques',
+    collection: 'Classiques',
+    price: 57,
+    originalPrice: 72,
+    description: 'Le Classique, c\'est le mariage audacieux du salé et du sucré. Cacahuètes, fleur de sel de l\'Atlas et argan — une explosion de saveurs qui réveille tes papilles. Le préféré des amateurs de sensations.',
     benefits: [
-      'Popeline premium qui ne froisse pas facilement',
-      'Coupe oversize délibérée pour le confort',
-      'Poitrine poche pour touche masculine-chic',
-      'Poignets réglables pour adapter la longueur'
+      'Fleur de sel de l\'Atlas — minéralité unique',
+      'Contraste salé-sucré addictif',
+      'Prix le plus accessible de la gamme premium',
+      'Parfait sur crêpes salées et toast',
     ],
-    material: 'Popeline de coton (100% Coton)',
-    care: 'Lavage machine à 40°, repassage autorisée',
-    colors: [
-      { name: 'Blanc', hex: '#FFFFFF' },
-      { name: 'Bleu Ciel', hex: '#87CEEB' },
-      { name: 'Rose Poudré', hex: '#D4A5A5' }
+    ingredients: 'Cacahuètes (68%), huile d\'argan (20%), miel (10%), fleur de sel de l\'Atlas (2%)',
+    weights: [
+      { label: '190g', grams: 190, price: 57 },
+      { label: '350g', grams: 350, price: 89 },
     ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/chemise-esprit-1.jpg', '/images/products/chemise-esprit-2.jpg'],
-    rating: 4.5,
-    reviewCount: 143,
+    images: ['/images/products/classique.jpg'],
+    rating: 4.6,
+    reviewCount: 445,
     inStock: true,
-    isNew: false,
-    isBestseller: true,
-    crossSellIds: ['6', '5', '10'],
-    painPoint: 'Les chemises classiques sont toujours trop courtes et trop étroites'
+    crossSellIds: ['2', '1', '7'],
+    upsellId: '1',
+    painPoint: 'Tu en as marre des pâtes à tartiner monotones — tu veux du caractère',
+    emoji: '🧂',
   },
   {
     id: '10',
-    slug: 'laliberte-robe-capuche',
-    name: 'Robe Ample à Capuche',
-    marketingName: 'La Liberté',
-    type: 'Robe',
-    category: 'robes',
-    collection: 'Robes Élégantes',
-    price: 349,
-    originalPrice: 449,
-    description: 'La Liberté, c\'est de sortir sans te soucier de ton hijab ou de ta coiffure. Cette robe ample à capuche est conçue pour les femmes qui veulent être couvertes ET élégantes — sans compromis.',
+    slug: 'lordusouss-amlou-bio-premium',
+    name: 'Amlou Amandes Bio Premium',
+    marketingName: "L'Or du Souss",
+    type: 'Amlou Bio',
+    category: 'premium',
+    collection: 'Premium',
+    price: 99,
+    originalPrice: 129,
+    description: "L'Or du Souss, c'est l'amlou certifié bio pour ceux qui ne transigent pas. Amandes bio 80%, argan IGP Souss-Massa, miel d'oranger bio — la référence absolue. Quand tu ne fais plus confiance au souk.",
     benefits: [
-      'Capuche intégrée pour plus de polyvalence',
-      'Coupe ample qui offre une liberté de mouvement totale',
-      'Manches longues avec poignets élastiques',
-      'Tissu opaque qui ne laisse rien deviner'
+      'Certification bio — traçabilité totale',
+      'Amandes bio 80% — la concentration la plus élevée',
+      'Huile d\'argan IGP Souss-Massa',
+      'Préparé en petite quantité — fraîcheur garantie',
     ],
-    material: 'Coton-Polyester (60% Coton, 40% Polyester)',
-    care: 'Lavage machine à 30°, séchage en machine autorisé',
-    colors: [
-      { name: 'Noir', hex: '#1a1a1a' },
-      { name: 'Marine', hex: '#1B2A4A' },
-      { name: 'Gris Foncé', hex: '#36454F' }
+    ingredients: 'Amandes bio (80%), huile d\'argan bio IGP (12%), miel d\'oranger bio (8%)',
+    weights: [
+      { label: '190g', grams: 190, price: 99 },
+      { label: '350g', grams: 350, price: 169 },
+      { label: '700g', grams: 700, price: 289 },
     ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/robe-liberte-1.jpg', '/images/products/robe-liberte-2.jpg'],
-    rating: 4.8,
-    reviewCount: 189,
+    images: ['/images/products/or-souss.jpg'],
+    rating: 4.9,
+    reviewCount: 523,
     inStock: true,
-    isNew: false,
     isBestseller: true,
-    crossSellIds: ['5', '6', '9'],
-    painPoint: 'Les robes à capuche sont toujours informes et sans style'
+    crossSellIds: ['1', '6', '11'],
+    upsellId: '11',
+    downsellId: '1',
+    painPoint: 'Tu ne fais plus confiance à l\'amlou du souk — tu veux une preuve de qualité',
+    emoji: '✨',
   },
   {
     id: '11',
-    slug: 'lharmonie-ensemble-gilet-robe',
-    name: 'Ensemble Gilet + Robe',
-    marketingName: "L'Harmonie",
-    type: 'Ensemble',
-    category: 'ensembles',
-    collection: 'Ensembles & Sets',
-    price: 549,
-    originalPrice: 749,
-    description: "L'Harmonie, c'est de porter deux pièces qui fonctionnent ensemble comme si elles étaient faites l'une pour l'autre. Ce gilet long sur une robe fluide — c'est le style qui impressionne sans effort.",
+    slug: 'leduo-gourmand-pack-2-pots',
+    name: 'Pack Duo Gourmand — 2 Pots au Choix',
+    marketingName: 'Le Duo Gourmand',
+    type: 'Pack',
+    category: 'packs',
+    collection: 'Packs & Coffrets',
+    price: 139,
+    originalPrice: 178,
+    description: 'Le Duo Gourmand, c\'est deux saveurs, un prix imbattable. Compose ton duo idéal — classique + chocolat, ou pistache + cajou — et économise 22%. Le cadeau parfait ou la découverte de la gamme.',
     benefits: [
-      'Gilet long qui ajoute une couche de sophistication',
-      'Robe fluide en dessous pour le confort',
-      'Les deux pièces portables séparément',
-      'Parfait pour les sorties et les occasions spéciales'
+      'Économise 22% vs achat séparé',
+      'Compose ton duo parmi 8 saveurs',
+      'Emballage cadeau offert',
+      'Livraison gratuite incluse',
     ],
-    material: 'Gilet: Viscose | Robe: Mousseline',
-    care: 'Lavage main recommandé pour les deux pièces',
-    colors: [
-      { name: 'Beige & Noir', hex: '#C4B49A' },
-      { name: 'Noir & Doré', hex: '#1a1a1a' }
+    ingredients: 'Selon les 2 saveurs choisies — voir fiches produits individuelles',
+    weights: [
+      { label: '2 × 190g', grams: 380, price: 139 },
+      { label: '2 × 350g', grams: 700, price: 239 },
     ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/ensemble-harmonie-1.jpg', '/images/products/ensemble-harmonie-2.jpg'],
+    images: ['/images/products/duo.jpg'],
     rating: 4.9,
-    reviewCount: 56,
+    reviewCount: 678,
     inStock: true,
-    isNew: true,
-    isBestseller: false,
-    crossSellIds: ['1', '8', '10'],
-    painPoint: 'Créer un look sophistiqué en grande taille demande trop d\'effort'
+    isBestseller: true,
+    crossSellIds: ['12', '1', '4'],
+    downsellId: '1',
+    painPoint: 'Tu veux goûter plusieurs saveurs sans payer le prix fort',
+    emoji: '🎁',
   },
   {
     id: '12',
-    slug: 'ledoux-soutien-gorge-comfort',
-    name: 'Soutien-Gorge Comfort',
-    marketingName: 'Le Secret',
-    type: 'Soutien-Gorge',
-    category: 'sous-vetements',
-    collection: 'Sous-Vêtements',
-    price: 179,
-    originalPrice: 249,
-    description: 'Le Secret, c\'est de trouver enfin un soutien-gorge qui t\'accompagne sans te comprimer. Conçu avec des larges bretelles et un dos élargi — le confort que tu n\'as jamais eu.',
+    slug: 'letresor-familial-pot-700g',
+    name: 'Pot Familial 700g',
+    marketingName: 'Le Trésor Familial',
+    type: 'Format Familial',
+    category: 'packs',
+    collection: 'Packs & Coffrets',
+    price: 149,
+    originalPrice: 199,
+    description: 'Le Trésor Familial, c\'est l\'amlou pour toute la semaine. 700g de L\'Origine dans un pot verre réutilisable — le meilleur rapport qualité-prix de notre gamme. Une famille, un pot, zéro gaspillage.',
     benefits: [
-      'Bretelles larges qui ne marquent pas',
-      'Dos élargi pour plus de stabilité',
-      'Cups douces et rembourrées',
-      'Fermeture à 4 crochets pour ajustement précis'
+      'Meilleur prix au gramme — économise 25%',
+      'Pot verre réutilisable et recyclable',
+      'Assez pour 2 semaines de petit-déjeuner familial',
+      'Même recette que L\'Origine — qualité identique',
     ],
-    material: 'Microfibre (80% Nylon, 20% Élasthanne)',
-    care: 'Lavage main uniquement, pas de séchage en machine',
-    colors: [
-      { name: 'Noir', hex: '#1a1a1a' },
-      { name: 'Beige', hex: '#D4B896' },
-      { name: 'Rose', hex: '#D4A5A5' }
+    ingredients: 'Amandes du Souss (65%), huile d\'argan alimentaire bio (25%), miel naturel du Maroc (10%)',
+    weights: [
+      { label: '700g', grams: 700, price: 149 },
     ],
-    sizes: [46, 48, 50, 52, 54],
-    images: ['/images/products/soutien-secret-1.jpg', '/images/products/soutien-secret-2.jpg'],
-    rating: 4.7,
-    reviewCount: 234,
+    images: ['/images/products/familial.jpg'],
+    rating: 4.8,
+    reviewCount: 389,
     inStock: true,
-    isNew: false,
     isBestseller: true,
-    crossSellIds: ['13', '5', '9'],
-    painPoint: 'Le soutien-gorge en grande taille est introuvable au Maroc'
+    crossSellIds: ['11', '4', '7'],
+    downsellId: '1',
+    painPoint: 'Tu rachètes chaque semaine — le format familial te fait économiser',
+    emoji: '🏠',
   },
-  {
-    id: '13',
-    slug: 'labase-legging-compression',
-    name: 'Legging Haute Compression',
-    marketingName: 'La Base',
-    type: 'Legging',
-    category: 'sous-vetements',
-    collection: 'Sous-Vêtements',
-    price: 229,
-    originalPrice: 299,
-    description: 'La Base, c\'est de commencer ta tenue par le confort. Ce legging haute compression est invisible sous tes vêtements — il lisse, il soutient, et il reste en place toute la journée.',
-    benefits: [
-      'Compression graduelle pour le confort',
-      'Taille haute qui ne roule pas',
-      'Tissu opaque — rien ne se voit à travers',
-      'Coutures plates pour un effet invisible'
-    ],
-    material: 'Nylon-Spandex (85% Nylon, 15% Spandex)',
-    care: 'Lavage machine à 30°, pas de séchage en machine',
-    colors: [
-      { name: 'Noir', hex: '#1a1a1a' },
-      { name: 'Beige Nude', hex: '#D4B896' }
-    ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/legging-base-1.jpg', '/images/products/legging-base-2.jpg'],
-    rating: 4.6,
-    reviewCount: 178,
-    inStock: true,
-    isNew: false,
-    isBestseller: false,
-    crossSellIds: ['12', '9', '5'],
-    painPoint: 'Les leggings en grande taille sont transparents ou glissent'
-  },
-  {
-    id: '14',
-    slug: 'lalerte-tunique-mousseline',
-    name: 'Tunique en Mousseline',
-    marketingName: 'La Douceur',
-    type: 'Tunique',
-    category: 'hauts',
-    collection: 'Hauts & Tuniques',
-    price: 249,
-    originalPrice: 329,
-    description: 'La Douceur, c\'est de sentir le tissu léger sur ta peau par une chaude journée marocaine. Cette tunique en mousseline est la pièce parfaite pour rester fraîche et stylée.',
-    benefits: [
-      'Mousseline légère et transparente avec doublure',
-      'Coupe évasée pour le confort maximal',
-      'Manches courtes pour l\'été marocain',
-      'Imprimé subtil pour touche de personnalité'
-    ],
-    material: 'Mousseline (100% Polyester) avec doublure coton',
-    care: 'Lavage délicat à 30°, pas de repassage directe',
-    colors: [
-      { name: 'Blanc', hex: '#FFFFFF' },
-      { name: 'Rose', hex: '#D4A5A5' },
-      { name: 'Bleu ciel', hex: '#87CEEB' }
-    ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/tunique-douceur-1.jpg', '/images/products/tunique-douceur-2.jpg'],
-    rating: 4.5,
-    reviewCount: 91,
-    inStock: true,
-    isNew: false,
-    isBestseller: false,
-    crossSellIds: ['6', '5', '10'],
-    painPoint: 'Les tuniques légères sont toujours transparentes en grande taille'
-  },
-  {
-    id: '15',
-    slug: 'lecharme-jupe-longue-satinee',
-    name: 'Jupe Longue Satinée',
-    marketingName: 'La Grâce',
-    type: 'Jupe',
-    category: 'pantalons',
-    collection: 'Pantalons & Jupes',
-    price: 229,
-    originalPrice: 299,
-    description: 'La Grâce, c\'est de porter une jupe qui bouge avec toi. Satinée, longue, et magnifique — elle transforme n\'importe quel haut en tenue de soirée.',
-    benefits: [
-      'Satin fluide qui crée un mouvement élégant',
-      'Taille élastique pour s\'adapter à toutes les morphologies',
-      'Longueur mi-mollet pour couvrir sans alourdir',
-      'Fendue sur le côté pour plus de liberté'
-    ],
-    material: 'Satin (100% Polyester)',
-    care: 'Lavage délicat à 30°, repassage à basse température',
-    colors: [
-      { name: 'Noir', hex: '#1a1a1a' },
-      { name: 'Bordeaux', hex: '#722F37' },
-      { name: 'Vert Sauge', hex: '#9CAF88' }
-    ],
-    sizes: [46, 48, 50, 52, 54, 56],
-    images: ['/images/products/jupe-grace-1.jpg', '/images/products/jupe-grace-2.jpg'],
-    rating: 4.7,
-    reviewCount: 85,
-    inStock: true,
-    isNew: false,
-    isBestseller: false,
-    crossSellIds: ['4', '9', '8'],
-    painPoint: 'Les jupes longues en satin sont impossibles à trouver au-dessus du 44'
-  }
 ];
 
 export const collections = [
   {
-    id: 'robes',
-    name: 'Robes Élégantes',
-    description: 'Des robes longues conçues pour sublimer tes courbes. Satin, lin, broderie — chaque pièce est une déclaration.',
-    image: '/images/collections/robes.jpg',
-    productCount: products.filter(p => p.category === 'robes').length
+    id: 'classiques',
+    name: 'Classiques',
+    description: 'Les recettes ancestrales du Souss — amandes, cacahuètes, argan et miel. L\'amlou authentique tel qu\'il se doit.',
+    emoji: '🫙',
+    productCount: products.filter(p => p.category === 'classiques').length,
   },
   {
-    id: 'ensembles',
-    name: 'Ensembles & Sets',
-    description: 'Des looks complets qui ne nécessitent aucun effort de coordination. Sortie de la boîte et prête à briller.',
-    image: '/images/collections/ensembles.jpg',
-    productCount: products.filter(p => p.category === 'ensembles').length
+    id: 'gourmand',
+    name: 'Gourmand',
+    description: 'Chocolat noir Valrhona, noisettes, pistache — quand l\'amlou rencontre la gourmandise sans culpabilité.',
+    emoji: '🍫',
+    productCount: products.filter(p => p.category === 'gourmand').length,
   },
   {
-    id: 'hauts',
-    name: 'Hauts & Tuniques',
-    description: 'Des hauts qui ne sont ni trop courts, ni trop étroits. Conçus pour des corps réels avec des vies réelles.',
-    image: '/images/collections/hauts.jpg',
-    productCount: products.filter(p => p.category === 'hauts').length
+    id: 'premium',
+    name: 'Premium & Bio',
+    description: 'Pistache, cajou, amandes bio IGP — le sommet de la qualité amlou marocaine.',
+    emoji: '💎',
+    productCount: products.filter(p => p.category === 'premium').length,
   },
   {
-    id: 'pantalons',
-    name: 'Pantalons & Jupes',
-    description: 'Des pantalons qui restent en place et des jupes qui bougent avec toi. Confort et style, sans compromis.',
-    image: '/images/collections/pantalons.jpg',
-    productCount: products.filter(p => p.category === 'pantalons').length
+    id: 'sante',
+    name: 'Santé & Light',
+    description: 'Sans sucre ajouté, index glycémique bas — le plaisir de l\'amlou pour tous.',
+    emoji: '🌿',
+    productCount: products.filter(p => p.category === 'sante').length,
   },
   {
-    id: 'manteaux',
-    name: 'Manteaux & Vestes',
-    description: 'Des couches extérieures qui ne sont pas un après-pensée. Structurées, élégantes, et faites pour tes épaules.',
-    image: '/images/collections/manteaux.jpg',
-    productCount: products.filter(p => p.category === 'manteaux').length
+    id: 'packs',
+    name: 'Packs & Coffrets',
+    description: 'Duos, formats familiaux et coffrets cadeaux — économise et fais plaisir.',
+    emoji: '🎁',
+    productCount: products.filter(p => p.category === 'packs').length,
   },
-  {
-    id: 'sous-vetements',
-    name: 'Sous-Vêtements',
-    description: 'La base de toute tenue magnifique. Soutiens-gorge et leggings qui soutiennent sans comprimer.',
-    image: '/images/collections/sous-vetements.jpg',
-    productCount: products.filter(p => p.category === 'sous-vetements').length
-  }
 ];
 
 export const testimonials = [
@@ -606,61 +487,55 @@ export const testimonials = [
     name: 'Fatima Z.',
     city: 'Casablanca',
     rating: 5,
-    text: "Pour la première fois de ma vie, j'ai trouvé une robe qui va parfaitement. Pas besoin de retoucher, pas besoin de compenser. AMAYNE a compris mon corps.",
-    product: "L'Élégance",
+    text: "J'ai arrêté Nutella depuis que j'ai goûté L'Origine. Mes enfants ne veulent plus rien d'autre. Enfin un produit naturel qui a du goût !",
+    product: "L'Origine",
     verified: true,
-    avatar: '/images/testimonials/fatima.jpg'
   },
   {
     id: '2',
-    name: 'Khadija M.',
+    name: 'Karim E.',
     city: 'Rabat',
     rating: 5,
-    text: "J'ai commandé l'ensemble La Confiance pour un mariage. Tout le monde m'a demandé où j'avais acheté ma tenue. Je n'avais jamais reçu autant de compliments.",
-    product: 'La Confiance',
+    text: "Je suis diabétique et Le Réveil m'a changé la vie. Je peux enfin me faire plaisir au petit-déjeuner sans culpabiliser. Merci AMAYNO.",
+    product: 'Le Réveil',
     verified: true,
-    avatar: '/images/testimonials/khadija.jpg'
   },
   {
     id: '3',
     name: 'Salma A.',
     city: 'Marrakech',
     rating: 5,
-    text: "Le pantalon La Puissance est devenu mon favori. Il reste en place toute la journée, même quand je suis active. C'est exactement ce que je cherchais.",
-    product: 'La Puissance',
+    text: "L'Indulgence au chocolat noir, c'est mon péché mignon du dimanche. Livraison en 3 jours, paiement à la livraison — parfait.",
+    product: "L'Indulgence",
     verified: true,
-    avatar: '/images/testimonials/salma.jpg'
   },
   {
     id: '4',
-    name: 'Nora B.',
-    city: 'Tanger',
+    name: 'Youssef M.',
+    city: 'Agadir',
     rating: 5,
-    text: "La qualité est incroyable pour le prix. J'ai eu des robes à 800dh qui n'étaient même pas à la moitié de la qualité d'AMAYNE. Je suis fan.",
-    product: "La Sérenité",
+    text: "Je suis d'Agadir et je connais l'amlou. AMAYNO c'est du vrai amlou du Souss, pas la contrefaçon qu'on trouve partout. Qualité exceptionnelle.",
+    product: "L'Or du Souss",
     verified: true,
-    avatar: '/images/testimonials/nora.jpg'
   },
   {
     id: '5',
-    name: 'Amina R.',
-    city: 'Fes',
-    rating: 4,
-    text: "Enfin une marque marocaine qui prend la grande taille au sérieux. Pas un 'collection grande taille' jeté là, mais une vraie marque pour nous.",
-    product: "L'Audace",
+    name: 'Nadia B.',
+    city: 'Tanger',
+    rating: 5,
+    text: "J'ai offert Le Trésor pistache à ma belle-mère pour l'Aïd. Elle a adoré. Emballage magnifique, produit premium. Je recommande.",
+    product: 'Le Trésor',
     verified: true,
-    avatar: '/images/testimonials/amina.jpg'
   },
   {
     id: '6',
-    name: 'Leila H.',
-    city: 'Agadir',
+    name: 'Hassan R.',
+    city: 'Fes',
     rating: 5,
-    text: "La livraison était rapide et le service client par WhatsApp est top. La robe est encore plus belle en vrai que sur les photos.",
-    product: 'La Liberté',
+    text: "L'Énergie cajou-dattes avant ma séance de sport, c'est mon secret. Énergie naturelle, pas de crash. Le Duo Gourmand est un excellent rapport qualité-prix.",
+    product: "L'Énergie",
     verified: true,
-    avatar: '/images/testimonials/leila.jpg'
-  }
+  },
 ];
 
 export const faqs = [
@@ -669,86 +544,61 @@ export const faqs = [
     questions: [
       {
         q: 'Combien de temps prend la livraison ?',
-        a: 'La livraison prend 3 à 5 jours ouvrés pour les grandes villes (Casablanca, Rabat, Marrakech, Tanger, Fes, Agadir) et 5 à 7 jours pour les autres villes. Tu reçois un SMS de confirmation dès que ta commande est expédiée.'
+        a: '3 à 5 jours ouvrés pour Casablanca, Rabat, Marrakech, Tanger, Fes et Agadir. 5 à 7 jours pour les autres villes. Tu reçois un SMS de confirmation dès l\'expédition.',
       },
       {
-        q: 'La livraison est-elle vraiment gratuite ?',
-        a: 'Oui, 100% gratuite sur toutes les commandes, sans montant minimum. C\'est notre engagement : pas de frais cachés, pas de surprises.'
+        q: 'La livraison est-elle gratuite ?',
+        a: 'Oui, 100% gratuite sur toutes les commandes partout au Maroc. Pas de montant minimum, pas de frais cachés.',
       },
       {
         q: 'Comment suivre ma commande ?',
-        a: 'Tu reçois un SMS avec le numéro de suivi dès l\'expédition. Tu peux aussi nous contacter par WhatsApp à tout moment avec ton numéro de commande pour un statut en temps réel.'
-      }
-    ]
+        a: 'Tu reçois un SMS avec le numéro de suivi. Contacte-nous aussi par WhatsApp à tout moment avec ton numéro de commande.',
+      },
+    ],
   },
   {
-    category: 'Tailles & Ajustement',
+    category: 'Produits & Qualité',
     questions: [
       {
-        q: 'Comment choisir ma taille ?',
-        a: 'Consulte notre Guide des Tailles sur chaque page produit. Mesure ton tour de poitrine, de taille et de hanches, puis compare avec notre tableau. Si tu hésites entre deux tailles, choisis la plus grande — nos tissus sont conçus pour épouser sans serrer.'
+        q: 'Votre amlou est-il 100% naturel ?',
+        a: 'Absolument. Zéro conservateur, zéro huile de palme, zéro sucre ajouté (sauf dans les variantes gourmandes où le miel est l\'unique sucrant). Trois ingrédients nobles : fruits secs torréfiés, huile d\'argan pressée à froid, miel pur.',
       },
       {
-        q: 'Les vêtements sont-ils fidèles aux tailles indiquées ?',
-        a: 'Oui ! Chaque pièce est spécifiquement conçue pour les tailles 46 à 56. Nos tailles sont marocaines et calibrées sur des mesures réelles de femmes marocaines.'
+        q: 'D\'où viennent vos ingrédients ?',
+        a: 'Directement du Souss-Massa : amandes et argan des coopératives féminines de l\'Anti-Atlas, miel des ruchers locaux. Traçabilité complète de la ferme au pot.',
       },
       {
-        q: 'La taille ne convient pas, que faire ?',
-        a: 'Pas de problème ! Contacte-nous par WhatsApp sous 30 jours pour un échange gratuit. On t\'envoie la bonne taille et on récupère l\'autre à ton domicile.'
-      }
-    ]
+        q: 'Comment conserver l\'amlou ?',
+        a: 'À température ambiante (15-25°C), à l\'abri de la lumière. Referme bien le pot après usage. Se conserve 6 mois après ouverture. La séparation naturelle de l\'huile est normale — remue avant usage.',
+      },
+    ],
   },
   {
     category: 'Retours & Échanges',
     questions: [
       {
-        q: 'Comment retourner un article ?',
-        a: 'Envoie-nous un message WhatsApp avec ton numéro de commande et la raison du retour. On programme un ramassage gratuit à ton domicile sous 48h.'
+        q: 'Puis-je retourner un produit ?',
+        a: 'Oui, 30 jours pour retourner un pot non ouvert. Contacte-nous par WhatsApp, on programme un ramassage gratuit à ton domicile.',
       },
       {
-        q: 'Combien de temps ai-je pour retourner ?',
-        a: 'Tu as 30 jours après réception pour retourner un article non porté avec les étiquettes encore attachées.'
+        q: 'Et si le produit est abîmé à la livraison ?',
+        a: 'Refuse le colis ou contacte-nous dans les 24h. On t\'envoie un remplacement gratuit immédiatement.',
       },
-      {
-        q: 'Comment serai-je remboursée ?',
-        a: 'Le remboursement se fait en cash lors de ta prochaine livraison, ou par virement mobile (inwi money, m-wallet) selon ta préférence. Le remboursement est traité sous 48h.'
-      }
-    ]
+    ],
   },
   {
     category: 'Paiement',
     questions: [
       {
-        q: 'Puis-je payer par carte bancaire ?',
-        a: 'Pour l\'instant, nous acceptons uniquement le paiement à la livraison (COD). C\'est la méthode la plus sûre et la plus utilisée au Maroc. Tu paies quand tu reçois ton colis.'
+        q: 'Comment payer ?',
+        a: 'Uniquement paiement à la livraison (COD). Tu commandes, on livre, tu paies en cash au livreur. Zéro risque, zéro avance.',
       },
       {
         q: 'Y a-t-il des frais supplémentaires ?',
-        a: 'Aucun. Le prix que tu vois est le prix que tu paies. Livraison gratuite, pas de frais de service, pas de surprises.'
+        a: 'Aucun. Le prix affiché est le prix final. Livraison gratuite incluse.',
       },
-      {
-        q: 'Puis-je payer en plusieurs fois ?',
-        a: 'Nous travaillons actuellement sur une option de paiement en 2 ou 3 fois. En attendant, tu peux commander plusieurs articles et les payer tous en une seule fois à la livraison.'
-      }
-    ]
+    ],
   },
-  {
-    category: 'Produits',
-    questions: [
-      {
-        q: 'Les tissus sont-ils de qualité ?',
-        a: 'Absolument. Nous sélectionnons personnellement chaque tissu. Nos matières premières sont les mêmes que celles utilisées par les grandes marques européennes — lin naturel, satin premium, coton égyptien.'
-      },
-      {
-        q: 'Comment entretenir mes vêtements AMAYNE ?',
-        a: 'Chaque produit a ses instructions d\'entretien sur la fiche produit. En général : lavage machine à 30°, pas de javelliser, séchage à l\'ombre. Nos tissus sont durables et gardent leur forme après de nombreux lavages.'
-      },
-      {
-        q: 'Nouvelles collections prévues ?',
-        a: 'Oui ! Nous sortons une nouvelle collection chaque saison. Inscris-toi à notre newsletter ou suis-nous sur Instagram @amayne.official pour être la première à découvrir les nouveautés.'
-      }
-    ]
-  }
 ];
 
 export function getProduct(id: string): Product | undefined {
@@ -767,6 +617,14 @@ export function getCrossSellProducts(product: Product): Product[] {
   return product.crossSellIds.map(id => products.find(p => p.id === id)).filter(Boolean) as Product[];
 }
 
+export function getUpsellProduct(product: Product): Product | undefined {
+  return product.upsellId ? products.find(p => p.id === product.upsellId) : undefined;
+}
+
+export function getDownsellProduct(product: Product): Product | undefined {
+  return product.downsellId ? products.find(p => p.id === product.downsellId) : undefined;
+}
+
 export function getBestsellers(): Product[] {
   return products.filter(p => p.isBestseller);
 }
@@ -777,4 +635,9 @@ export function getNewArrivals(): Product[] {
 
 export function getCollection(id: string) {
   return collections.find(c => c.id === id);
+}
+
+export function getPriceForWeight(product: Product, grams: number): number {
+  const w = product.weights.find(w => w.grams === grams);
+  return w?.price ?? product.price;
 }
