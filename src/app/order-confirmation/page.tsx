@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { CheckCircle, Truck, Clock, MessageCircle, ArrowRight, Star, Gift, Zap } from 'lucide-react';
 import { products, getProductBySlug } from '@/lib/data';
 import { useEffect, useState, Suspense } from 'react';
+import { useLanguage } from '@/context/LanguageProvider';
 
 function ConfirmationContent() {
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const orderNumber = searchParams.get('order') || `AMY-${Date.now().toString(36).toUpperCase()}`;
   const customerName = searchParams.get('name') || '';
   const city = searchParams.get('city') || '';
@@ -53,10 +55,10 @@ function ConfirmationContent() {
             <CheckCircle size={48} className="text-brand-forest" />
           </div>
           <h1 className="font-display text-2xl md:text-3xl font-bold text-brand-ink mb-3">
-            Commande Confirmée ! 🫙
+            {t('confirm_title')} 🫙
           </h1>
           <p className="text-brand-muted text-lg">
-            Choukran{customerName ? ` ${customerName.split(' ')[0]}` : ''} ! Ta commande est en cours de préparation.
+            {t('confirm_thanks')}
           </p>
         </div>
 
@@ -64,18 +66,18 @@ function ConfirmationContent() {
         <div className="bg-white rounded-2xl border border-brand-border p-6 mb-6">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <p className="text-xs text-brand-muted uppercase tracking-wider mb-1">N° Commande</p>
+              <p className="text-xs text-brand-muted uppercase tracking-wider mb-1">{t('confirm_order')}</p>
               <p className="font-bold text-brand-ink text-lg">{orderNumber}</p>
             </div>
             <div>
-              <p className="text-xs text-brand-muted uppercase tracking-wider mb-1">Total à payer à la livraison</p>
+              <p className="text-xs text-brand-muted uppercase tracking-wider mb-1">{t('confirm_total')}</p>
               <p className="font-bold text-brand-amber text-2xl">{total} MAD</p>
             </div>
           </div>
 
           {productName && (
             <div className="mt-4 pt-4 border-t border-brand-border">
-              <p className="text-sm text-brand-muted">Produit commandé</p>
+              <p className="text-sm text-brand-muted">{t('confirm_product')}</p>
               <p className="font-semibold text-brand-ink">{productName} — {weight}g × {quantity}</p>
             </div>
           )}
@@ -86,8 +88,8 @@ function ConfirmationContent() {
                 <Truck size={20} className="text-brand-amber" />
               </div>
               <div>
-                <p className="font-semibold text-brand-ink">Livraison estimée</p>
-                <p className="text-sm text-brand-muted">3 à 5 jours ouvrés{city ? ` à ${city}` : ''} — Livraison gratuite</p>
+                <p className="font-semibold text-brand-ink">{t('confirm_delivery')}</p>
+                <p className="text-sm text-brand-muted">{t('confirm_delivery_sub')}{city ? ` — ${city}` : ''}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -95,8 +97,8 @@ function ConfirmationContent() {
                 <Clock size={20} className="text-brand-amber" />
               </div>
               <div>
-                <p className="font-semibold text-brand-ink">Paiement à la livraison</p>
-                <p className="text-sm text-brand-muted">Tu paies {total} MAD en cash au livreur — zéro avance</p>
+                <p className="font-semibold text-brand-ink">{t('confirm_payment')}</p>
+                <p className="text-sm text-brand-muted">{t('confirm_payment_sub')}</p>
               </div>
             </div>
           </div>
@@ -104,12 +106,12 @@ function ConfirmationContent() {
 
         {/* Next Steps */}
         <div className="bg-white rounded-2xl border border-brand-border p-6 mb-6">
-          <h2 className="font-semibold text-lg text-brand-ink mb-4">Et maintenant ?</h2>
+          <h2 className="font-semibold text-lg text-brand-ink mb-4">{t('confirm_next')}</h2>
           <div className="space-y-4">
             {[
-              { step: '1', title: 'SMS de confirmation', desc: 'Tu reçois un SMS dans les prochaines minutes avec ton numéro de commande.' },
-              { step: '2', title: 'Préparation', desc: 'Notre équipe du Souss prépare ton amlou avec soin — fraîcheur garantie.' },
-              { step: '3', title: 'Livraison & Paiement', desc: 'Le livreur t\'appelle 30 min avant. Tu paies à la réception.' },
+              { step: '1', title: t('confirm_step1_t'), desc: t('confirm_step1_d') },
+              { step: '2', title: t('confirm_step2_t'), desc: t('confirm_step2_d') },
+              { step: '3', title: t('confirm_step3_t'), desc: t('confirm_step3_d') },
             ].map(item => (
               <div key={item.step} className="flex items-start gap-4">
                 <div className="w-8 h-8 rounded-full bg-brand-amber/10 text-brand-amber flex items-center justify-center text-sm font-bold flex-shrink-0">{item.step}</div>
@@ -130,21 +132,21 @@ function ConfirmationContent() {
               <div className="flex items-center gap-2 mb-3">
                 <Gift size={24} className="text-brand-honey" />
                 <span className="bg-brand-terracotta text-white px-3 py-1 rounded-full text-xs font-bold urgency-pulse">
-                  OFFRE FLASH — {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                  {t('confirm_flash')} — {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                 </span>
               </div>
               <h2 className="font-display text-xl md:text-2xl font-bold mb-2">
-                Ajoute un 2ème Pot — Économise 22%
+                {t('confirm_bundle_t')}
               </h2>
               <p className="text-white/80 text-sm mb-4">
-                Pendant que ta commande se prépare, profite du {aovBundle.marketingName} à {aovBundle.price} MAD au lieu de {aovBundle.originalPrice} MAD. Livraison groupée gratuite.
+                {t('confirm_bundle_sub')}
               </p>
               <Link
                 href={`/products/${aovBundle.slug}?ref=confirmation&bundle=1`}
                 className="inline-flex items-center bg-brand-amber text-brand-brown px-6 py-3 rounded-full font-bold hover:bg-brand-honey transition-colors"
               >
                 <Zap size={18} className="mr-2" />
-                Ajouter le Duo — {aovBundle.price} MAD
+                {t('confirm_bundle_btn')} — {aovBundle.price} MAD
               </Link>
             </div>
           </div>
@@ -153,10 +155,10 @@ function ConfirmationContent() {
         {/* Cross-Sell Grid */}
         <div className="mb-8">
           <h2 className="font-display text-xl md:text-2xl font-bold text-brand-ink mb-2 text-center">
-            Pendant Que Tu Attends...
+            {t('confirm_wait')}
           </h2>
           <p className="text-brand-muted text-center mb-6 text-sm">
-            Commande une 2ème saveur — livraison groupée, un seul paiement à la livraison.
+            {t('confirm_wait_sub')}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {crossSellProducts.map(product => product && (
@@ -178,7 +180,7 @@ function ConfirmationContent() {
                   </div>
                   <p className="font-bold text-brand-ink text-sm mt-2">{product.price} MAD</p>
                   <div className="mt-2 w-full bg-brand-brown text-white py-1.5 rounded-full text-xs font-semibold text-center group-hover:bg-brand-amber group-hover:text-brand-brown transition-colors">
-                    Commander
+                    {t('order_btn')}
                   </div>
                 </div>
               </Link>
@@ -188,7 +190,7 @@ function ConfirmationContent() {
 
         {/* WhatsApp */}
         <div className="bg-brand-brown rounded-2xl p-6 mb-8 text-center text-white">
-          <p className="font-semibold mb-2">Une question sur ta commande ?</p>
+          <p className="font-semibold mb-2">{t('confirm_whatsapp_t')}</p>
           <a
             href={`https://wa.me/212600000000?text=${encodeURIComponent(`Salam, j'ai passé la commande ${orderNumber}. Question:`)}`}
             target="_blank"
@@ -196,13 +198,13 @@ function ConfirmationContent() {
             className="inline-flex items-center bg-white text-brand-brown px-8 py-3 rounded-full font-bold hover:bg-brand-cream transition-colors"
           >
             <MessageCircle size={18} className="mr-2" />
-            WhatsApp — Réponse en 5 min
+            {t('confirm_whatsapp_btn')}
           </a>
         </div>
 
         <div className="text-center">
           <Link href="/" className="inline-flex items-center bg-brand-amber text-brand-brown px-8 py-3 rounded-full font-semibold hover:bg-brand-honey transition-colors">
-            Retour à l&apos;accueil <ArrowRight size={16} className="ml-2" />
+            {t('confirm_home')} <ArrowRight size={16} className="ml-2" />
           </Link>
         </div>
       </div>
@@ -210,9 +212,14 @@ function ConfirmationContent() {
   );
 }
 
+function ConfirmLoading() {
+  const { t } = useLanguage();
+  return <div className="min-h-screen flex items-center justify-center">{t('loading')}</div>;
+}
+
 export default function OrderConfirmationPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Chargement...</div>}>
+    <Suspense fallback={<ConfirmLoading />}>
       <ConfirmationContent />
     </Suspense>
   );

@@ -1,14 +1,14 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { CartProvider } from '@/lib/cart-context';
+import Providers from '@/components/Providers';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 
 export const metadata: Metadata = {
   title: 'AMAYNO — Amlou Authentique du Souss | Livraison Gratuite Maroc',
-  description: 'AMAYNO, l\'amlou 100% naturel du Maroc. Amandes, argan et miel — livré chez toi partout au Maroc. Paiement à la livraison. Sans conservateurs, sans huile de palme.',
-  keywords: 'amlou maroc, amlou amandes, pâte à tartiner naturelle, amlou livraison maroc, amlou bio, AMAYNO, amlou argan miel',
+  description: 'AMAYNO, l\'amlou 100% naturel du Maroc. Amandes, argan et miel — livré chez toi partout au Maroc. Paiement à la livraison.',
+  keywords: 'amlou maroc, amlou amandes, pâte à tartiner naturelle, amlou livraison maroc, amlou bio, AMAYNO',
   openGraph: {
     title: 'AMAYNO — L\'Amlou Authentique du Souss',
     description: '100% naturel. Fabriqué au Maroc. Livraison gratuite. Paiement à la livraison.',
@@ -17,20 +17,27 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+};
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
-      <body className="min-h-screen flex flex-col">
-        <CartProvider>
+    <html lang="fr" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col antialiased overflow-x-hidden">
+        <Providers>
           <Navbar />
           <CartDrawer />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 w-full">{children}</main>
           <Footer />
-        </CartProvider>
+        </Providers>
       </body>
     </html>
   );

@@ -12,10 +12,12 @@ import {
   getPriceForWeight,
   CITIES,
 } from '@/lib/data';
+import { useLanguage } from '@/context/LanguageProvider';
 
 export default function ProductPage() {
   const params = useParams();
   const router = useRouter();
+  const { t, dir } = useLanguage();
   const slug = params.slug as string;
   const product = getProductBySlug(slug);
 
@@ -29,8 +31,8 @@ export default function ProductPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Produit non trouvé</h1>
-          <Link href="/" className="text-brand-amber hover:underline">Retour à l&apos;accueil</Link>
+          <h1 className="text-2xl font-bold mb-4">{t('product_not_found')}</h1>
+          <Link href="/" className="text-brand-amber hover:underline">{t('product_back')}</Link>
         </div>
       </div>
     );
@@ -46,9 +48,9 @@ export default function ProductPage() {
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!form.name.trim()) e.name = 'Le nom est requis';
-    if (!form.phone.trim() || form.phone.trim() === '+212') e.phone = 'Le téléphone est requis';
-    if (!form.city) e.city = 'La ville est requise';
+    if (!form.name.trim()) e.name = t('err_name');
+    if (!form.phone.trim() || form.phone.trim() === '+212') e.phone = t('err_phone');
+    if (!form.city) e.city = t('err_city');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -80,7 +82,7 @@ export default function ProductPage() {
       <div className="bg-white border-b border-brand-border">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <nav className="flex items-center text-sm text-brand-muted">
-            <Link href="/" className="hover:text-brand-ink">Accueil</Link>
+            <Link href="/" className="hover:text-brand-ink">{t('home')}</Link>
             <ChevronRight size={14} className="mx-2" />
             <Link href={`/collections/${product.category}`} className="hover:text-brand-ink">{product.collection}</Link>
             <ChevronRight size={14} className="mx-2" />
@@ -89,14 +91,13 @@ export default function ProductPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-          {/* Gallery */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
           <div>
-            <div className="aspect-square product-jar rounded-2xl border border-brand-border overflow-hidden flex items-center justify-center">
-              <span className="text-[120px]">{product.emoji}</span>
+            <div className="aspect-square max-h-[320px] sm:max-h-none product-jar rounded-xl sm:rounded-2xl border border-brand-border overflow-hidden flex items-center justify-center mx-auto lg:mx-0">
+              <span className="text-6xl sm:text-8xl lg:text-[120px]">{product.emoji}</span>
             </div>
-            <p className="text-center text-sm text-brand-muted mt-3">Photo produit à venir — qualité identique</p>
+            <p className="text-center text-xs sm:text-sm text-brand-muted mt-3">{t('product_photo_soon')}</p>
           </div>
 
           {/* Product + Order Form */}
@@ -113,7 +114,7 @@ export default function ProductPage() {
                   <Star key={i} size={18} className={i < Math.floor(product.rating) ? 'text-brand-honey' : 'text-brand-border'} fill={i < Math.floor(product.rating) ? 'currentColor' : 'none'} />
                 ))}
               </div>
-              <span className="text-sm text-brand-muted ml-2">{product.rating}/5 — {product.reviewCount} avis</span>
+              <span className="text-sm text-brand-muted ml-2">{product.rating}/5 — {product.reviewCount} {t('product_reviews')}</span>
             </div>
 
             {/* Pain Point Hook */}
@@ -133,7 +134,7 @@ export default function ProductPage() {
 
             {/* Weight Selection */}
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-brand-ink mb-3">Format</label>
+              <label className="block text-sm font-semibold text-brand-ink mb-3">{t('product_format')}</label>
               <div className="flex flex-wrap gap-2">
                 {product.weights.map(w => (
                   <button
@@ -151,7 +152,7 @@ export default function ProductPage() {
 
             {/* Quantity */}
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-brand-ink mb-3">Quantité</label>
+              <label className="block text-sm font-semibold text-brand-ink mb-3">{t('product_qty')}</label>
               <div className="flex items-center space-x-4">
                 <div className="flex items-center bg-brand-sand rounded-full">
                   <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 hover:bg-brand-border rounded-full"><Minus size={16} /></button>
@@ -160,7 +161,7 @@ export default function ProductPage() {
                 </div>
                 {quantity >= 2 && (
                   <span className="text-sm bg-brand-forest/10 text-brand-forest px-3 py-1 rounded-full font-medium">
-                    🎁 -10% dès 2 pots — appliqué à la livraison
+                    {t('product_qty_deal')}
                   </span>
                 )}
               </div>
@@ -170,13 +171,13 @@ export default function ProductPage() {
             <form onSubmit={handleOrder} className="bg-white rounded-2xl border-2 border-brand-amber/30 p-6 mb-6">
               <h2 className="font-bold text-lg text-brand-ink mb-1 flex items-center gap-2">
                 <Sparkles size={20} className="text-brand-amber" />
-                Commander — Paiement à la Livraison
+                {t('product_order_title')}
               </h2>
-              <p className="text-sm text-brand-muted mb-4">Remplis le formulaire — on livre, tu paies à la réception.</p>
+              <p className="text-sm text-brand-muted mb-4">{t('product_order_sub')}</p>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-brand-ink mb-1">Nom complet *</label>
+                  <label className="block text-sm font-medium text-brand-ink mb-1">{t('product_name')} *</label>
                   <input
                     type="text"
                     value={form.name}
@@ -188,7 +189,7 @@ export default function ProductPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-brand-ink mb-1">Téléphone *</label>
+                  <label className="block text-sm font-medium text-brand-ink mb-1">{t('product_phone')} *</label>
                   <input
                     type="tel"
                     value={form.phone}
@@ -200,13 +201,13 @@ export default function ProductPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-brand-ink mb-1">Ville *</label>
+                  <label className="block text-sm font-medium text-brand-ink mb-1">{t('product_city')} *</label>
                   <select
                     value={form.city}
                     onChange={e => { setForm({ ...form, city: e.target.value }); if (errors.city) setErrors({ ...errors, city: '' }); }}
                     className={`w-full px-4 py-3 rounded-xl border ${errors.city ? 'border-brand-terracotta' : 'border-brand-border'} focus:outline-none focus:ring-2 focus:ring-brand-amber bg-brand-cream appearance-none`}
                   >
-                    <option value="">Sélectionne ta ville</option>
+                    <option value="">{t('product_city_select')}</option>
                     {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                   {errors.city && <p className="text-brand-terracotta text-xs mt-1">{errors.city}</p>}
@@ -218,31 +219,31 @@ export default function ProductPage() {
                 disabled={submitting}
                 className="w-full mt-6 bg-brand-amber text-brand-brown py-4 rounded-full font-bold text-lg hover:bg-brand-honey transition-colors shadow-lg disabled:opacity-70"
               >
-                {submitting ? 'Confirmation...' : `Commander — ${totalPrice} MAD`}
+                {submitting ? t('product_confirming') : `${t('product_order_btn')} — ${totalPrice} MAD`}
               </button>
-              <p className="text-center text-xs text-brand-muted mt-3">💳 Paiement à la livraison · 🚚 Livraison gratuite</p>
+              <p className="text-center text-xs text-brand-muted mt-3">💳 {t('cod')} · 🚚 {t('free_shipping')}</p>
             </form>
 
             {/* Trust Badges */}
             <div className="grid grid-cols-3 gap-3 mb-8">
               <div className="flex flex-col items-center text-center">
                 <Truck size={20} className="text-brand-forest mb-1" />
-                <span className="text-xs font-medium text-brand-muted">Livraison Gratuite</span>
+                <span className="text-xs font-medium text-brand-muted">{t('product_trust_ship')}</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <Leaf size={20} className="text-brand-forest mb-1" />
-                <span className="text-xs font-medium text-brand-muted">100% Naturel</span>
+                <span className="text-xs font-medium text-brand-muted">{t('product_trust_natural')}</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <Shield size={20} className="text-brand-forest mb-1" />
-                <span className="text-xs font-medium text-brand-muted">Paiement à la Livraison</span>
+                <span className="text-xs font-medium text-brand-muted">{t('product_trust_cod')}</span>
               </div>
             </div>
 
             {/* Description */}
             <div className="border-t border-brand-border pt-8">
               <p className="text-brand-muted leading-relaxed mb-4">{product.description}</p>
-              <h3 className="font-semibold text-brand-ink mb-2">Bénéfices</h3>
+              <h3 className="font-semibold text-brand-ink mb-2">{t('product_benefits')}</h3>
               <ul className="space-y-2 mb-6">
                 {product.benefits.map((b, i) => (
                   <li key={i} className="flex items-start text-sm text-brand-muted">
@@ -250,7 +251,7 @@ export default function ProductPage() {
                   </li>
                 ))}
               </ul>
-              <p className="text-sm"><span className="font-semibold text-brand-ink">Ingrédients :</span> <span className="text-brand-muted">{product.ingredients}</span></p>
+              <p className="text-sm"><span className="font-semibold text-brand-ink">{t('product_ingredients')} :</span> <span className="text-brand-muted">{product.ingredients}</span></p>
             </div>
           </div>
         </div>
@@ -260,7 +261,7 @@ export default function ProductPage() {
           <div className="mt-12 bg-gradient-to-r from-brand-amber/10 to-brand-honey/10 rounded-2xl p-6 border border-brand-amber/30">
             <div className="flex items-center gap-2 mb-4">
               <ArrowUp size={20} className="text-brand-amber" />
-              <h2 className="font-bold text-lg text-brand-ink">Upgrade Premium — Meilleure Qualité</h2>
+              <h2 className="font-bold text-lg text-brand-ink">{t('product_upsell')}</h2>
             </div>
             <Link href={`/products/${upsell.slug}`} className="flex items-center gap-4 bg-white rounded-xl p-4 hover:shadow-md transition-shadow border border-brand-border">
               <span className="text-4xl">{upsell.emoji}</span>
@@ -271,7 +272,7 @@ export default function ProductPage() {
               </div>
               <div className="text-right">
                 <p className="font-bold text-brand-ink">{upsell.price} MAD</p>
-                <span className="text-xs text-brand-amber font-medium">Voir →</span>
+                <span className="text-xs text-brand-amber font-medium">{t('product_view')}</span>
               </div>
             </Link>
           </div>
@@ -282,7 +283,7 @@ export default function ProductPage() {
           <div className="mt-6 bg-brand-sand/50 rounded-2xl p-6 border border-brand-border">
             <div className="flex items-center gap-2 mb-4">
               <ArrowDown size={20} className="text-brand-muted" />
-              <h2 className="font-bold text-lg text-brand-ink">Budget Serré ? Essaie Celui-Ci</h2>
+              <h2 className="font-bold text-lg text-brand-ink">{t('product_downsell')}</h2>
             </div>
             <Link href={`/products/${downsell.slug}`} className="flex items-center gap-4 bg-white rounded-xl p-4 hover:shadow-md transition-shadow border border-brand-border">
               <span className="text-4xl">{downsell.emoji}</span>
@@ -301,8 +302,8 @@ export default function ProductPage() {
         {/* Cross-Sell */}
         {crossSell.length > 0 && (
           <div className="mt-12 border-t border-brand-border pt-12">
-            <h2 className="font-display text-2xl font-bold text-brand-ink mb-2 text-center">Complète Ta Commande</h2>
-            <p className="text-brand-muted text-center mb-8">Les clients qui ont commandé {product.marketingName} ont aussi pris...</p>
+            <h2 className="font-display text-2xl font-bold text-brand-ink mb-2 text-center">{t('product_crosssell')}</h2>
+            <p className="text-brand-muted text-center mb-8 text-sm sm:text-base">{t('product_crosssell_sub')}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {crossSell.map(item => (
                 <Link key={item.id} href={`/products/${item.slug}`} className="group bg-white rounded-2xl overflow-hidden border border-brand-border hover:shadow-lg transition-all">

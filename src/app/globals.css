@@ -86,3 +86,42 @@ input[type="radio"]:checked {
 .product-jar {
   background: linear-gradient(135deg, #F0E6D6 0%, #E8D5B5 50%, #D4B896 100%);
 }
+
+/* Responsive & RTL */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+[dir='rtl'] body {
+  font-family: 'Noto Sans Arabic', 'DM Sans', sans-serif;
+}
+
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+@media (max-width: 639px) {
+  .container-tight {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .tablet-grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
