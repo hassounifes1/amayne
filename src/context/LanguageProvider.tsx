@@ -22,6 +22,12 @@ interface LanguageContextValue {
   setLang: (lang: Lang) => void;
   t: (key: TranslationKey) => string;
   dir: 'ltr' | 'rtl';
+  /** Avoid Arabic text cut-off in tight UI slots */
+  cls: {
+    oneLine: string;
+    twoLine: string;
+    title: string;
+  };
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -64,7 +70,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, [lang, dir, mounted]);
 
-  const value = useMemo(() => ({ lang, setLang, t, dir }), [lang, setLang, t, dir]);
+  const cls = useMemo(
+    () => ({
+      oneLine: lang === 'ar' ? 'line-clamp-2 break-words leading-snug' : 'line-clamp-1',
+      twoLine: lang === 'ar' ? 'line-clamp-3 break-words leading-snug min-h-[2.75rem]' : 'line-clamp-2 min-h-[2rem]',
+      title: lang === 'ar' ? 'break-words whitespace-normal leading-snug' : 'truncate',
+    }),
+    [lang],
+  );
+
+  const value = useMemo(() => ({ lang, setLang, t, dir, cls }), [lang, setLang, t, dir, cls]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }

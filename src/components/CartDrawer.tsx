@@ -6,10 +6,11 @@ import { X, Plus, Minus, ShoppingBag, Truck } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { useLanguage } from '@/context/LanguageProvider';
 import { getPriceForWeight } from '@/lib/data';
+import { localizeProduct } from '@/lib/localized-content';
 
 export default function CartDrawer() {
   const { items, removeItem, updateQuantity, total, itemCount, isOpen, setIsOpen } = useCart();
-  const { t, dir } = useLanguage();
+  const { t, dir, lang, cls } = useLanguage();
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
@@ -56,6 +57,7 @@ export default function CartDrawer() {
             <div className="space-y-3 sm:space-y-4">
               {items.map(item => {
                 const unitPrice = getPriceForWeight(item.product, item.weight);
+                const lp = localizeProduct(item.product, lang);
                 return (
                   <div key={`${item.product.id}-${item.weight}`} className="flex gap-3 sm:gap-4 bg-white p-3 sm:p-4 rounded-xl border border-brand-border">
                     <div className="w-14 h-14 sm:w-16 sm:h-16 product-jar rounded-lg flex items-center justify-center flex-shrink-0">
@@ -64,7 +66,7 @@ export default function CartDrawer() {
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start gap-2">
                         <div className="min-w-0">
-                          <p className="font-semibold text-brand-ink text-sm truncate">{item.product.marketingName}</p>
+                          <p className={`font-semibold text-brand-ink text-sm ${cls.title}`}>{lp.marketingName}</p>
                           <p className="text-xs text-brand-muted">{item.weight}g</p>
                         </div>
                         <button onClick={() => removeItem(item.product.id, item.weight)} className="text-brand-muted hover:text-brand-terracotta p-1 touch-target">

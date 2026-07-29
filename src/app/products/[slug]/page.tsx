@@ -13,11 +13,12 @@ import {
   CITIES,
 } from '@/lib/data';
 import { useLanguage } from '@/context/LanguageProvider';
+import { localizeCity, localizeProduct } from '@/lib/localized-content';
 
 export default function ProductPage() {
   const params = useParams();
   const router = useRouter();
-  const { t, dir } = useLanguage();
+  const { t, dir, lang, cls } = useLanguage();
   const slug = params.slug as string;
   const product = getProductBySlug(slug);
 
@@ -45,6 +46,9 @@ export default function ProductPage() {
   const unitPrice = getPriceForWeight(product, weight);
   const totalPrice = unitPrice * quantity;
   const discount = product.originalPrice ? Math.round((1 - product.price / product.originalPrice) * 100) : 0;
+  const lp = localizeProduct(product, lang);
+  const upsellLp = upsell ? localizeProduct(upsell, lang) : null;
+  const downsellLp = downsell ? localizeProduct(downsell, lang) : null;
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -69,7 +73,7 @@ export default function ProductPage() {
       `&phone=${encodeURIComponent(form.phone)}` +
       `&city=${encodeURIComponent(form.city)}` +
       `&product=${encodeURIComponent(product.slug)}` +
-      `&productName=${encodeURIComponent(product.marketingName)}` +
+      `&productName=${encodeURIComponent(lp.marketingName)}` +
       `&weight=${weight}` +
       `&quantity=${quantity}` +
       `&total=${totalPrice}` +
@@ -84,9 +88,9 @@ export default function ProductPage() {
           <nav className="flex items-center text-sm text-brand-muted">
             <Link href="/" className="hover:text-brand-ink">{t('home')}</Link>
             <ChevronRight size={14} className="mx-2" />
-            <Link href={`/collections/${product.category}`} className="hover:text-brand-ink">{product.collection}</Link>
+            <Link href={`/collections/${product.category}`} className="hover:text-brand-ink">{lp.collection}</Link>
             <ChevronRight size={14} className="mx-2" />
-            <span className="text-brand-ink">{product.marketingName}</span>
+            <span className="text-brand-ink break-words">{lp.marketingName}</span>
           </nav>
         </div>
       </div>
@@ -103,10 +107,10 @@ export default function ProductPage() {
           {/* Product + Order Form */}
           <div>
             <span className="inline-block bg-brand-amber/10 text-brand-amber px-3 py-1 rounded-full text-sm font-medium mb-3">
-              {product.marketingName}
+              {lp.marketingName}
             </span>
 
-            <h1 className="font-display text-3xl md:text-4xl font-bold text-brand-ink mb-2">{product.name}</h1>
+            <h1 className="font-display text-3xl md:text-4xl font-bold text-brand-ink mb-2 break-words">{lp.name}</h1>
 
             <div className="flex items-center mb-4">
               <div className="flex">
@@ -118,8 +122,8 @@ export default function ProductPage() {
             </div>
 
             {/* Pain Point Hook */}
-            <div className="bg-brand-sand/60 border-l-4 border-brand-amber rounded-r-xl p-4 mb-6">
-              <p className="text-brand-ink text-sm font-medium">{product.painPoint}</p>
+            <div className={`bg-brand-sand/60 p-4 mb-6 ${dir === 'rtl' ? 'border-s-4 border-brand-amber rounded-e-xl' : 'border-l-4 border-brand-amber rounded-r-xl'}`}>
+              <p className="text-brand-ink text-sm font-medium break-words">{lp.painPoint}</p>
             </div>
 
             <div className="flex items-center space-x-3 mb-6">
@@ -182,7 +186,7 @@ export default function ProductPage() {
                     type="text"
                     value={form.name}
                     onChange={e => { setForm({ ...form, name: e.target.value }); if (errors.name) setErrors({ ...errors, name: '' }); }}
-                    placeholder="Ex: Fatima Zahra"
+                    placeholder={t('placeholder_name')}
                     className={`w-full px-4 py-3 rounded-xl border ${errors.name ? 'border-brand-terracotta' : 'border-brand-border'} focus:outline-none focus:ring-2 focus:ring-brand-amber bg-brand-cream`}
                   />
                   {errors.name && <p className="text-brand-terracotta text-xs mt-1">{errors.name}</p>}
@@ -208,7 +212,7 @@ export default function ProductPage() {
                     className={`w-full px-4 py-3 rounded-xl border ${errors.city ? 'border-brand-terracotta' : 'border-brand-border'} focus:outline-none focus:ring-2 focus:ring-brand-amber bg-brand-cream appearance-none`}
                   >
                     <option value="">{t('product_city_select')}</option>
-                    {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    {CITIES.map(c => <option key={c} value={c}>{localizeCity(c, lang)}</option>)}
                   </select>
                   {errors.city && <p className="text-brand-terracotta text-xs mt-1">{errors.city}</p>}
                 </div>
@@ -242,22 +246,22 @@ export default function ProductPage() {
 
             {/* Description */}
             <div className="border-t border-brand-border pt-8">
-              <p className="text-brand-muted leading-relaxed mb-4">{product.description}</p>
+              <p className="text-brand-muted leading-relaxed mb-4 break-words">{lp.description}</p>
               <h3 className="font-semibold text-brand-ink mb-2">{t('product_benefits')}</h3>
               <ul className="space-y-2 mb-6">
-                {product.benefits.map((b, i) => (
+                {lp.benefits.map((b, i) => (
                   <li key={i} className="flex items-start text-sm text-brand-muted">
                     <span className="text-brand-forest mr-2">✓</span>{b}
                   </li>
                 ))}
               </ul>
-              <p className="text-sm"><span className="font-semibold text-brand-ink">{t('product_ingredients')} :</span> <span className="text-brand-muted">{product.ingredients}</span></p>
+              <p className="text-sm break-words"><span className="font-semibold text-brand-ink">{t('product_ingredients')} :</span> <span className="text-brand-muted">{lp.ingredients}</span></p>
             </div>
           </div>
         </div>
 
         {/* Upsell */}
-        {upsell && (
+        {upsell && upsellLp && (
           <div className="mt-12 bg-gradient-to-r from-brand-amber/10 to-brand-honey/10 rounded-2xl p-6 border border-brand-amber/30">
             <div className="flex items-center gap-2 mb-4">
               <ArrowUp size={20} className="text-brand-amber" />
@@ -265,10 +269,10 @@ export default function ProductPage() {
             </div>
             <Link href={`/products/${upsell.slug}`} className="flex items-center gap-4 bg-white rounded-xl p-4 hover:shadow-md transition-shadow border border-brand-border">
               <span className="text-4xl">{upsell.emoji}</span>
-              <div className="flex-1">
-                <p className="text-xs text-brand-amber font-medium">{upsell.marketingName}</p>
-                <p className="font-semibold text-brand-ink">{upsell.name}</p>
-                <p className="text-sm text-brand-muted line-clamp-1">{upsell.painPoint}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-brand-amber font-medium">{upsellLp.marketingName}</p>
+                <p className="font-semibold text-brand-ink break-words">{upsellLp.name}</p>
+                <p className={`text-sm text-brand-muted ${cls.oneLine}`}>{upsellLp.painPoint}</p>
               </div>
               <div className="text-right">
                 <p className="font-bold text-brand-ink">{upsell.price} MAD</p>
@@ -279,7 +283,7 @@ export default function ProductPage() {
         )}
 
         {/* Downsell */}
-        {downsell && (
+        {downsell && downsellLp && (
           <div className="mt-6 bg-brand-sand/50 rounded-2xl p-6 border border-brand-border">
             <div className="flex items-center gap-2 mb-4">
               <ArrowDown size={20} className="text-brand-muted" />
@@ -287,13 +291,13 @@ export default function ProductPage() {
             </div>
             <Link href={`/products/${downsell.slug}`} className="flex items-center gap-4 bg-white rounded-xl p-4 hover:shadow-md transition-shadow border border-brand-border">
               <span className="text-4xl">{downsell.emoji}</span>
-              <div className="flex-1">
-                <p className="text-xs text-brand-muted font-medium">{downsell.marketingName}</p>
-                <p className="font-semibold text-brand-ink">{downsell.name}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-brand-muted font-medium">{downsellLp.marketingName}</p>
+                <p className="font-semibold text-brand-ink break-words">{downsellLp.name}</p>
               </div>
               <div className="text-right">
                 <p className="font-bold text-brand-ink">{downsell.price} MAD</p>
-                <span className="text-xs text-brand-muted">Voir →</span>
+                <span className="text-xs text-brand-muted">{t('product_view')}</span>
               </div>
             </Link>
           </div>
@@ -305,18 +309,20 @@ export default function ProductPage() {
             <h2 className="font-display text-2xl font-bold text-brand-ink mb-2 text-center">{t('product_crosssell')}</h2>
             <p className="text-brand-muted text-center mb-8 text-sm sm:text-base">{t('product_crosssell_sub')}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {crossSell.map(item => (
+              {crossSell.map(item => {
+                const itemLp = localizeProduct(item, lang);
+                return (
                 <Link key={item.id} href={`/products/${item.slug}`} className="group bg-white rounded-2xl overflow-hidden border border-brand-border hover:shadow-lg transition-all">
                   <div className="aspect-square product-jar flex items-center justify-center">
                     <span className="text-4xl group-hover:scale-110 transition-transform">{item.emoji}</span>
                   </div>
                   <div className="p-4">
-                    <p className="text-xs text-brand-amber font-medium">{item.marketingName}</p>
-                    <h3 className="font-semibold text-sm text-brand-ink line-clamp-1">{item.name}</h3>
+                    <p className="text-xs text-brand-amber font-medium">{itemLp.marketingName}</p>
+                    <h3 className={`font-semibold text-sm text-brand-ink ${cls.oneLine}`}>{itemLp.name}</h3>
                     <p className="font-bold text-brand-ink mt-2">{item.price} MAD</p>
                   </div>
                 </Link>
-              ))}
+              );})}
             </div>
           </div>
         )}

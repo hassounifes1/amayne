@@ -96,6 +96,24 @@ html {
   font-family: 'Noto Sans Arabic', 'DM Sans', sans-serif;
 }
 
+/* Arabic: prevent clipped/truncated text in cards and nav */
+[dir='rtl'] .truncate {
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
+  word-break: break-word;
+}
+
+[dir='rtl'] .line-clamp-1 {
+  -webkit-line-clamp: 2;
+  word-break: break-word;
+}
+
+[dir='rtl'] .line-clamp-2 {
+  -webkit-line-clamp: 3;
+  word-break: break-word;
+}
+
 .touch-target {
   min-height: 44px;
   min-width: 44px;

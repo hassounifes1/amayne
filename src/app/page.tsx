@@ -2,13 +2,15 @@
 
 import Link from 'next/link';
 import { Star, Truck, Shield, Leaf, ArrowRight, Award, Heart } from 'lucide-react';
-import { collections, testimonials, getBestsellers } from '@/lib/data';
+import { collections, getBestsellers } from '@/lib/data';
+import { getLocalizedTestimonials, localizeCollection, localizeProduct } from '@/lib/localized-content';
 import { useLanguage } from '@/context/LanguageProvider';
 import Logo from '@/components/Logo';
 
 export default function HomePage() {
-  const { t, dir } = useLanguage();
+  const { t, dir, lang, cls } = useLanguage();
   const bestsellers = getBestsellers();
+  const localizedTestimonials = getLocalizedTestimonials(lang);
   const arrowClass = dir === 'rtl' ? 'mr-2 rotate-180' : 'ml-2';
 
   const stats = [
@@ -146,7 +148,9 @@ export default function HomePage() {
             <p className="text-brand-muted text-sm sm:text-lg px-2">{t('collections_sub')}</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-            {collections.map(collection => (
+            {collections.map(collection => {
+              const lc = localizeCollection(collection.id, lang);
+              return (
               <Link
                 key={collection.id}
                 href={`/collections/${collection.id}`}
@@ -157,11 +161,11 @@ export default function HomePage() {
                   <span className="text-3xl sm:text-5xl group-hover:scale-110 transition-transform">{collection.emoji}</span>
                 </div>
                 <div className="absolute bottom-0 inset-x-0 p-3 sm:p-4 text-white">
-                  <h3 className="font-bold text-xs sm:text-base leading-tight">{collection.name}</h3>
+                  <h3 className="font-bold text-xs sm:text-base leading-tight break-words">{lc.name}</h3>
                   <p className="text-[10px] sm:text-xs text-white/70 mt-0.5">{collection.productCount} {t('collections_products')}</p>
                 </div>
               </Link>
-            ))}
+            );})}
           </div>
         </div>
       </section>
@@ -176,7 +180,9 @@ export default function HomePage() {
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-brand-ink">{t('bestsellers_title')}</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-            {bestsellers.slice(0, 8).map(product => (
+            {bestsellers.slice(0, 8).map(product => {
+              const lp = localizeProduct(product, lang);
+              return (
               <Link
                 key={product.id}
                 href={`/products/${product.slug}`}
@@ -191,8 +197,8 @@ export default function HomePage() {
                   )}
                 </div>
                 <div className="p-3 sm:p-4">
-                  <p className="text-[10px] sm:text-xs text-brand-amber font-medium mb-0.5 truncate">{product.marketingName}</p>
-                  <h3 className="font-semibold text-brand-ink text-xs sm:text-sm line-clamp-2 min-h-[2rem]">{product.name}</h3>
+                  <p className={`text-[10px] sm:text-xs text-brand-amber font-medium mb-0.5 ${cls.title}`}>{lp.marketingName}</p>
+                  <h3 className={`font-semibold text-brand-ink text-xs sm:text-sm ${cls.twoLine}`}>{lp.name}</h3>
                   <div className="flex items-center mt-1">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} size={10} className={`sm:w-3 sm:h-3 ${i < Math.floor(product.rating) ? 'text-brand-honey' : 'text-brand-border'}`} fill={i < Math.floor(product.rating) ? 'currentColor' : 'none'} />
@@ -207,7 +213,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </Link>
-            ))}
+            );})}
           </div>
         </div>
       </section>
@@ -220,18 +226,18 @@ export default function HomePage() {
             <p className="text-brand-muted text-sm sm:text-base">{t('testimonials_sub')}</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {testimonials.map(item => (
+            {localizedTestimonials.map(item => (
               <div key={item.id} className="bg-brand-cream rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-brand-border">
                 <div className="flex items-center mb-2 sm:mb-3">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} size={14} className={i < item.rating ? 'text-brand-honey' : 'text-brand-border'} fill={i < item.rating ? 'currentColor' : 'none'} />
                   ))}
                 </div>
-                <p className="text-brand-ink text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">&quot;{item.text}&quot;</p>
+                <p className="text-brand-ink text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 break-words">&quot;{item.text}&quot;</p>
                 <div className="flex items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="font-semibold text-brand-ink text-xs sm:text-sm truncate">{item.name}</p>
-                    <p className="text-[10px] sm:text-xs text-brand-muted truncate">{item.city}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className={`font-semibold text-brand-ink text-xs sm:text-sm ${cls.title}`}>{item.name}</p>
+                    <p className={`text-[10px] sm:text-xs text-brand-muted ${cls.title}`}>{item.city}</p>
                   </div>
                   <span className="text-[10px] sm:text-xs bg-brand-forest/10 text-brand-forest px-2 py-1 rounded-full font-medium flex-shrink-0">✓ {t('verified')}</span>
                 </div>

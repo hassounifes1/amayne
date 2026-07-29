@@ -1,7 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
-  <ellipse cx="28" cy="34" rx="18" ry="20" fill="#FFFFFF"/>
-  <ellipse cx="28" cy="26" rx="14" ry="6" fill="#E8B84A"/>
-  <rect x="24" y="10" width="8" height="10" rx="2" fill="#FFFFFF"/>
-  <text x="58" y="28" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#FFFFFF" letter-spacing="6">AMAYNO</text>
-  <text x="58" y="44" font-family="Arial, sans-serif" font-size="8" font-weight="500" fill="#E8B84A" letter-spacing="4">AMLOU DU SOUSS</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 52" fill="none" role="img" aria-label="AMAYNO">
+  <text x="0" y="30" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="600" fill="#FFFFFF" letter-spacing="4.5">AMAYNO</text>
+  <text x="1" y="46" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="500" fill="#E8B84A" letter-spacing="3.2">AMLOU DU SOUSS</text>
 </svg>

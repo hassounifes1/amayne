@@ -37,7 +37,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="bg-brand-brown text-white text-center py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium leading-snug">
+      <div className="bg-brand-brown text-white text-center py-2.5 px-3 sm:px-4 text-xs sm:text-sm font-medium leading-relaxed break-words">
         <span className="urgency-pulse">🫙</span>{' '}
         {t('announce')}{' '}
         <span className="urgency-pulse">🫙</span>
