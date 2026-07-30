@@ -49,7 +49,7 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="grid grid-cols-[auto_1fr_auto] lg:flex lg:items-center lg:justify-between h-14 sm:h-16 md:h-20 gap-2 sm:gap-4">
+          <div className="grid grid-cols-[auto_1fr_auto] lg:flex lg:items-center lg:justify-between h-16 sm:h-[4.75rem] md:h-24 gap-2 sm:gap-4">
             {/* Mobile menu */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -60,9 +60,8 @@ export default function Navbar() {
             </button>
 
             {/* Logo — centered on mobile/tablet */}
-            <Link href="/" className="flex justify-center lg:justify-start min-w-0" onClick={() => setMobileMenuOpen(false)}>
-              <Logo variant="dark" size="sm" className="sm:hidden" />
-              <Logo variant="dark" size="md" className="hidden sm:flex" />
+            <Link href="/" className="flex justify-center lg:justify-start items-center min-w-0 py-1" onClick={() => setMobileMenuOpen(false)}>
+              <Logo variant="dark" size="md" useImage showTagline={false} />
             </Link>
 
             {/* Desktop nav */}
@@ -99,7 +98,7 @@ export default function Navbar() {
 
         {/* Mobile / tablet drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 top-[calc(2.5rem+3.5rem)] sm:top-[calc(2.5rem+4rem)] z-40 bg-brand-cream/98 backdrop-blur-md border-t border-brand-border overflow-y-auto pb-safe">
+          <div className="lg:hidden fixed inset-0 top-[calc(2.5rem+4rem)] sm:top-[calc(2.5rem+4.75rem)] md:top-[calc(2.5rem+6rem)] z-40 bg-brand-cream/98 backdrop-blur-md border-t border-brand-border overflow-y-auto pb-safe">
             <nav className="px-3 sm:px-4 py-4 space-y-1 max-w-lg mx-auto">
               {navLinks.map(link => (
                 <Link
