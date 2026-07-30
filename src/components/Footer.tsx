@@ -52,7 +52,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           <div className="sm:col-span-2 lg:col-span-1">
-            <Logo variant="gold" size="md" useImage showTagline />
+            <Logo size="md" />
             <p className="mt-4 text-sm text-white/70 leading-relaxed max-w-sm">{t('footer_desc')}</p>
           </div>
 

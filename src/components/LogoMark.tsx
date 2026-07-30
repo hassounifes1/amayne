@@ -18,9 +18,10 @@ export default function LogoMark({ tagline, taglineSmall, variant = 'dark', clas
   const softShadow = `soft-shadow-${rawId}`;
   const textShadow = `text-shadow-${rawId}`;
 
-  const tagSize = taglineSmall ? 4.5 : 5.2;
-  const tagY = taglineSmall ? 93.2 : 92.5;
+  const tagSize = taglineSmall ? 4.8 : 5.5;
+  const tagY = taglineSmall ? 93 : 92.2;
   const tagFill = variant === 'gold' || variant === 'light' ? '#F7E7A9' : '#2C1810';
+  const nameFill = variant === 'gold' || variant === 'light' ? '#FFFFFF' : `url(#${blue})`;
 
   return (
     <svg
@@ -94,9 +95,9 @@ export default function LogoMark({ tagline, taglineSmall, variant = 'dark', clas
         x="60"
         y="58"
         textAnchor="middle"
-        fill={`url(#${blue})`}
+        fill={nameFill}
         fontFamily="'DM Sans', Arial, sans-serif"
-        fontSize="22"
+        fontSize="23.5"
         fontWeight="800"
         letterSpacing="2.5"
         filter={`url(#${textShadow})`}

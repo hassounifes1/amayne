@@ -66,16 +66,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Hero visual — visible on tablet+ */}
-            <div className="relative max-w-sm mx-auto lg:max-w-none w-full">
-              <div className="aspect-square max-h-[280px] sm:max-h-[360px] lg:max-h-none product-jar rounded-2xl sm:rounded-3xl border border-brand-honey/30 flex flex-col items-center justify-center overflow-hidden shadow-2xl mx-auto">
-                <Logo variant="gold" size="lg" useImage showTagline className="mx-auto" />
-                <p className="text-white/70 text-xs sm:text-sm mt-4 px-4 text-center">{t('hero_jar_sub')}</p>
-              </div>
-              <div className="absolute -top-2 end-0 sm:-top-4 sm:-end-4 bg-brand-honey text-brand-brown px-3 py-1.5 rounded-full font-bold text-xs sm:text-sm shadow-lg">
+            {/* Hero logo — transparent asset, no box */}
+            <div className="relative flex items-center justify-center lg:justify-end py-4 lg:py-0">
+              <Logo size="xl" className="mx-auto lg:mx-0" />
+              <div className="absolute -top-1 end-0 sm:-top-3 sm:-end-3 bg-brand-honey text-brand-brown px-3 py-1.5 rounded-full font-bold text-xs sm:text-sm shadow-lg">
                 {t('hero_launch')}
               </div>
-              <div className="absolute -bottom-2 start-0 sm:-bottom-4 sm:-start-4 bg-white text-brand-brown px-3 py-1.5 rounded-full font-bold text-xs sm:text-sm shadow-lg flex items-center gap-1">
+              <div className="absolute -bottom-1 start-0 sm:-bottom-3 sm:-start-3 bg-white text-brand-brown px-3 py-1.5 rounded-full font-bold text-xs sm:text-sm shadow-lg flex items-center gap-1">
                 <Star size={14} className="text-brand-amber" fill="currentColor" />
                 {t('hero_rating')}
               </div>
@@ -270,7 +267,7 @@ export default function HomePage() {
       {/* CTA */}
       <section className="py-12 sm:py-16 md:py-20 bg-brand-brown">
         <div className="max-w-3xl mx-auto px-3 sm:px-4 text-center">
-            <Logo variant="gold" size="lg" useImage showTagline className="mx-auto mb-6" />
+            <Logo size="lg" className="mx-auto mb-4" />
           <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">{t('cta_title')}</h2>
           <p className="text-white/80 text-sm sm:text-lg mb-6 sm:mb-8">{t('cta_sub')}</p>
           <Link href="/collections/classiques" className="inline-flex items-center bg-brand-amber text-brand-brown px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:bg-brand-honey transition-colors touch-target">
