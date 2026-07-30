@@ -25,7 +25,7 @@ const fr = {
   announce: 'Livraison gratuite partout au Maroc — Paiement à la livraison',
 
   // Logo tagline
-  logo_tagline: 'Amlou du Souss',
+  logo_tagline: 'MIEL NATUREL & AMLOU',
 
   // Hero
   hero_badge: 'N°1 Amlou Authentique au Maroc — 2026',
@@ -238,7 +238,7 @@ const ar: Record<TranslationKey, string> = {
   nav_faq: 'أسئلة',
   nav_cart: 'السلة',
   announce: 'توصيل مجاني في كل المغرب — الدفع عند الاستلام',
-  logo_tagline: 'أملو السوس',
+  logo_tagline: 'عسل طبيعي وأملو',
   hero_badge: 'أملو أصيل رقم 1 في المغرب — 2026',
   hero_title_1: 'أملو السوس،',
   hero_title_2: 'يوصل عندك',
@@ -417,7 +417,7 @@ const en: Record<TranslationKey, string> = {
   nav_faq: 'FAQ',
   nav_cart: 'Cart',
   announce: 'Free shipping across Morocco — Cash on delivery',
-  logo_tagline: 'Souss Amlou',
+  logo_tagline: 'NATURAL HONEY & AMLOU',
   hero_badge: '#1 Authentic Amlou in Morocco — 2026',
   hero_title_1: 'Souss Amlou,',
   hero_title_2: 'Delivered to You',

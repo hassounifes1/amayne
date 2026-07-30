@@ -1,4 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 52" fill="none" role="img" aria-label="AMAYNO">
-  <text x="0" y="30" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="600" fill="#FFFFFF" letter-spacing="4.5">AMAYNO</text>
-  <text x="1" y="46" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="500" fill="#E8B84A" letter-spacing="3.2">AMLOU DU SOUSS</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" fill="none" role="img" aria-label="AMAYNO">
+  <defs>
+    <linearGradient id="b" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1B2A4A"/><stop offset="100%" stop-color="#2E5090"/>
+    </linearGradient>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F7E7A9"/><stop offset="100%" stop-color="#B8860B"/>
+    </linearGradient>
+    <linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#40916C"/><stop offset="100%" stop-color="#1B4332"/>
+    </linearGradient>
+  </defs>
+  <path d="M8 52 C8 28 34 10 60 10 C86 10 112 28 112 52" stroke="url(#g)" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+  <path d="M8 48 C8 72 34 90 60 90 C86 90 112 72 112 48" stroke="url(#gr)" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+  <text x="60" y="58" text-anchor="middle" fill="url(#b)" font-family="Georgia, serif" font-size="21" font-weight="800" letter-spacing="2.5">AMAYNO</text>
+  <text x="60" y="93" text-anchor="middle" fill="#2C1810" font-family="Arial, sans-serif" font-size="4.8" font-weight="600" letter-spacing="0.8">NATURAL HONEY &amp; AMLOU</text>
 </svg>

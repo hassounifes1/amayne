@@ -69,7 +69,7 @@ export default function HomePage() {
             {/* Hero visual — visible on tablet+ */}
             <div className="relative max-w-sm mx-auto lg:max-w-none w-full">
               <div className="aspect-square max-h-[280px] sm:max-h-[360px] lg:max-h-none product-jar rounded-2xl sm:rounded-3xl border border-brand-honey/30 flex flex-col items-center justify-center overflow-hidden shadow-2xl mx-auto">
-                <Logo variant="gold" size="lg" showTagline className="flex-col items-center text-center [&_span]:text-center" />
+                <Logo variant="gold" size="lg" showTagline className="mx-auto" />
                 <p className="text-white/70 text-xs sm:text-sm mt-4 px-4 text-center">{t('hero_jar_sub')}</p>
               </div>
               <div className="absolute -top-2 end-0 sm:-top-4 sm:-end-4 bg-brand-honey text-brand-brown px-3 py-1.5 rounded-full font-bold text-xs sm:text-sm shadow-lg">
