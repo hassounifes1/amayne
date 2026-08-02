@@ -16,6 +16,7 @@ ENV NEXT_PUBLIC_GTM_ID=$NEXT_PUBLIC_GTM_ID
 COPY package.json package-lock.json* ./
 RUN npm ci
 COPY . .
+ENV NODE_OPTIONS="--max-old-space-size=2048"
 RUN npm run build
 
 FROM node:20-alpine AS runner
