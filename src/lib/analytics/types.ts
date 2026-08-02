@@ -54,6 +54,11 @@ export interface DashboardStats {
   range: StatsRange;
   from: string;
   to: string;
+  meta: {
+    totalEvents: number;
+    updatedAt: string;
+    generatedAt: string;
+  };
   kpis: {
     visitors: number;
     sessions: number;

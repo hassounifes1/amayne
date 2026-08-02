@@ -40,8 +40,12 @@ function trimEvents(events: AnalyticsEvent[]): AnalyticsEvent[] {
   return filtered;
 }
 
+export async function readStore(): Promise<AnalyticsStore> {
+  return ensureStore();
+}
+
 export async function readEvents(): Promise<AnalyticsEvent[]> {
-  const store = await ensureStore();
+  const store = await readStore();
   return store.events;
 }
 

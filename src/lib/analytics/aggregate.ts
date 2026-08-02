@@ -182,6 +182,11 @@ export function aggregateStats(events: AnalyticsEvent[], range: StatsRange): Das
     range,
     from: from.toISOString(),
     to: to.toISOString(),
+    meta: {
+      totalEvents: events.length,
+      updatedAt: events[events.length - 1]?.ts || new Date(0).toISOString(),
+      generatedAt: new Date().toISOString(),
+    },
     kpis: {
       visitors,
       sessions,

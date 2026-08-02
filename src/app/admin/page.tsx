@@ -17,6 +17,8 @@ import {
   Percent,
   Clock,
   Lock,
+  Database,
+  Settings2,
   type LucideIcon,
 } from 'lucide-react';
 import type { DashboardStats, StatsRange } from '@/lib/analytics/types';
@@ -40,6 +42,16 @@ function fmtTime(iso: string) {
   return new Date(iso).toLocaleString('fr-FR', {
     day: '2-digit',
     month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function fmtDateTime(iso: string) {
+  return new Date(iso).toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -170,8 +182,51 @@ function LoginForm({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
+function SetupView() {
+  return (
+    <div className="min-h-screen bg-brand-cream flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl border border-brand-border p-8 w-full max-w-2xl shadow-lg">
+        <div className="w-14 h-14 rounded-2xl bg-brand-brown flex items-center justify-center mb-6">
+          <Settings2 className="text-brand-amber" size={28} />
+        </div>
+        <h1 className="font-display text-2xl font-bold mb-2">Configuration requise</h1>
+        <p className="text-brand-muted mb-6">
+          Le dashboard existe déjà, mais il faut d&apos;abord définir le mot de passe admin dans EasyPanel.
+        </p>
+        <div className="bg-brand-cream rounded-2xl p-5 border border-brand-border mb-6">
+          <p className="text-sm font-semibold text-brand-ink mb-2">Variables minimales</p>
+          <pre className="text-sm whitespace-pre-wrap text-brand-muted">
+ADMIN_DASHBOARD_PASSWORD=TonMotDePasse123
+HOSTNAME=0.0.0.0
+PORT=3000
+ANALYTICS_DATA_DIR=/app/data
+          </pre>
+        </div>
+        <p className="text-sm text-brand-muted">
+          Après sauvegarde, relance le service puis ouvre <code className="bg-brand-sand px-1 rounded">/admin</code>.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="bg-white rounded-2xl border border-brand-border p-8 shadow-sm text-center">
+      <div className="w-16 h-16 rounded-2xl bg-brand-amber/10 flex items-center justify-center mx-auto mb-4">
+        <Database size={28} className="text-brand-amber" />
+      </div>
+      <h2 className="font-semibold text-xl text-brand-ink mb-2">Pas encore de data analytics</h2>
+      <p className="text-brand-muted max-w-2xl mx-auto">
+        Le tracking est en place. Dès qu&apos;un visiteur entre dans le store, voit un produit, ajoute au panier ou passe commande,
+        les chiffres vont apparaître ici automatiquement.
+      </p>
+    </div>
+  );
+}
+
 export default function AdminDashboardPage() {
-  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [mode, setMode] = useState<'loading' | 'login' | 'setup' | 'ready'>('loading');
   const [range, setRange] = useState<StatsRange>('7d');
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(false);
@@ -181,8 +236,21 @@ export default function AdminDashboardPage() {
     setLoading(true);
     setError('');
     const res = await fetch(`/api/admin/stats?range=${r}`, { cache: 'no-store' });
+    let json: { stats?: DashboardStats; error?: string } | null = null;
+    try {
+      json = await res.json();
+    } catch {
+      json = null;
+    }
+
+    if (res.status === 503 || json?.error === 'admin_not_configured') {
+      setMode('setup');
+      setStats(null);
+      setLoading(false);
+      return;
+    }
     if (res.status === 401) {
-      setAuthed(false);
+      setMode('login');
       setLoading(false);
       return;
     }
@@ -191,9 +259,13 @@ export default function AdminDashboardPage() {
       setLoading(false);
       return;
     }
-    const json = await res.json();
+    if (!json?.stats) {
+      setError('Réponse analytics invalide.');
+      setLoading(false);
+      return;
+    }
     setStats(json.stats);
-    setAuthed(true);
+    setMode('ready');
     setLoading(false);
   }, []);
 
@@ -203,15 +275,19 @@ export default function AdminDashboardPage() {
 
   const logout = async () => {
     await fetch('/api/admin/auth', { method: 'DELETE' });
-    setAuthed(false);
+    setMode('login');
     setStats(null);
   };
 
-  if (authed === false) {
+  if (mode === 'setup') {
+    return <SetupView />;
+  }
+
+  if (mode === 'login') {
     return <LoginForm onSuccess={() => loadStats(range)} />;
   }
 
-  if (authed === null && !stats) {
+  if (mode === 'loading' && !stats) {
     return (
       <div className="min-h-screen bg-brand-cream flex items-center justify-center">
         <RefreshCw className="animate-spin text-brand-amber" size={32} />
@@ -231,7 +307,10 @@ export default function AdminDashboardPage() {
               <BarChart3 size={24} className="text-brand-amber" />
               AMAYNO Dashboard
             </h1>
-            <p className="text-white/70 text-sm">Visiteurs · Leads · Commandes · CA</p>
+            <p className="text-white/70 text-sm">
+              Visiteurs · Leads · Commandes · CA
+              {stats?.meta ? ` · ${fmt(stats.meta.totalEvents)} events` : ''}
+            </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             {RANGES.map(r => (
@@ -272,6 +351,23 @@ export default function AdminDashboardPage() {
 
         {k && cmp && (
           <>
+            {stats.meta.totalEvents === 0 && <EmptyState />}
+
+            <section className="grid md:grid-cols-3 gap-4">
+              <div className="bg-white rounded-2xl border border-brand-border p-4 shadow-sm">
+                <p className="text-sm text-brand-muted mb-1">Dernière écriture</p>
+                <p className="font-semibold text-brand-ink">{fmtDateTime(stats.meta.updatedAt)}</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-brand-border p-4 shadow-sm">
+                <p className="text-sm text-brand-muted mb-1">Rapport généré</p>
+                <p className="font-semibold text-brand-ink">{fmtDateTime(stats.meta.generatedAt)}</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-brand-border p-4 shadow-sm">
+                <p className="text-sm text-brand-muted mb-1">Events stockés</p>
+                <p className="font-semibold text-brand-ink">{fmt(stats.meta.totalEvents)}</p>
+              </div>
+            </section>
+
             <section className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
               <KpiCard
                 icon={Users}
