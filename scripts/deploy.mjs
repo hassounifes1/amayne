@@ -35,5 +35,6 @@ if (result.status !== 0) {
 }
 
 console.log(`\nEasypanel redeploy triggered (${service}).`);
-console.log('Source must be: https://github.com/hassounifes1/amayne branch main');
-console.log('App port: 3000 · Build: Dockerfile');
+console.log('Source: https://github.com/hassounifes1/bakandamayno branch main');
+console.log('App port: 3000 · Build: Dockerfile · Health: /api/health');
+console.log('Dashboard: https://YOUR-DOMAIN/admin (set ADMIN_DASHBOARD_PASSWORD in env)');
