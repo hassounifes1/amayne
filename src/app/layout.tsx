@@ -1,9 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Providers from '@/components/Providers';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import CartDrawer from '@/components/CartDrawer';
+import AppShell from '@/components/AppShell';
 import Analytics from '@/components/Analytics';
 
 export const metadata: Metadata = {
@@ -35,10 +33,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col antialiased overflow-x-hidden">
         <Analytics />
         <Providers>
-          <Navbar />
-          <CartDrawer />
-          <main className="flex-1 w-full">{children}</main>
-          <Footer />
+          <AppShell>{children}</AppShell>
         </Providers>
       </body>
     </html>

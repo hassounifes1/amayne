@@ -1,18 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronRight, Truck, Shield, CreditCard, MapPin, User, Phone } from 'lucide-react';
+import { ChevronRight, CreditCard, MapPin, User } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { CITIES, getPriceForWeight } from '@/lib/data';
 import { createEventId, trackLead } from '@/lib/tracking/client';
+import { trackAnalyticsEvent } from '@/lib/analytics/client';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, total, clearCart } = useCart();
   const [form, setForm] = useState({ name: '', phone: '+212 ', city: '', address: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (items.length === 0) return;
+    void trackAnalyticsEvent({
+      type: 'InitiateCheckout',
+      value: total,
+      quantity: items.length,
+      items: items.map(item => ({
+        slug: item.product.slug,
+        name: item.product.marketingName,
+        quantity: item.quantity,
+        price: getPriceForWeight(item.product, item.weight),
+      })),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per checkout visit
+  }, []);
 
   const updateField = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));

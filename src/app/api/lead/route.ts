@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { recordFromLeadPayload } from '@/lib/analytics/store';
 import { dispatchLeadServerSide } from '@/lib/tracking/server';
 import { isServerTrackingEnabled } from '@/lib/tracking/config';
 import type { LeadPayload, TrackingEventName } from '@/lib/tracking/types';
@@ -47,10 +48,6 @@ function sanitizePayload(body: unknown): LeadPayload | null {
 }
 
 export async function POST(request: NextRequest) {
-  if (!isServerTrackingEnabled()) {
-    return NextResponse.json({ ok: true, skipped: true, reason: 'tracking_not_configured' });
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -65,6 +62,32 @@ export async function POST(request: NextRequest) {
 
   if (!payload.sourceUrl) {
     payload.sourceUrl = request.headers.get('referer') || undefined;
+  }
+
+  const visitorId = request.headers.get('x-amayno-visitor') || undefined;
+  const sessionId = request.headers.get('x-amayno-session') || undefined;
+
+  void recordFromLeadPayload({
+    eventName: payload.eventName,
+    orderId: payload.orderId,
+    value: payload.value,
+    currency: payload.currency,
+    name: payload.name,
+    phone: payload.phone,
+    city: payload.city,
+    productSlug: payload.productSlug,
+    productName: payload.productName,
+    quantity: payload.quantity,
+    items: payload.items,
+    visitorId,
+    sessionId,
+    path: payload.sourceUrl ? new URL(payload.sourceUrl, 'http://local').pathname : undefined,
+    referrer: request.headers.get('referer') || undefined,
+    userAgent: request.headers.get('user-agent') || undefined,
+  }).catch(() => {});
+
+  if (!isServerTrackingEnabled()) {
+    return NextResponse.json({ ok: true, skipped: true, reason: 'tracking_not_configured', analytics: true });
   }
 
   const result = await dispatchLeadServerSide(payload);

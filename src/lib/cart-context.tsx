@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { CartItem, Product } from './data';
+import { trackAnalyticsEvent } from '@/lib/analytics/client';
 
 interface CartContextType {
   items: CartItem[];
@@ -36,6 +37,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return [...prev, { product, weight, quantity }];
     });
     setIsOpen(true);
+
+    void trackAnalyticsEvent({
+      type: 'AddToCart',
+      productSlug: product.slug,
+      productName: product.marketingName,
+      value: product.weights.find(w => w.grams === weight)?.price ?? product.price,
+      quantity,
+    });
   }, []);
 
   const removeItem = useCallback((productId: string, weight: number) => {

@@ -15,6 +15,7 @@ import {
 import { useLanguage } from '@/context/LanguageProvider';
 import { localizeCity, localizeProduct } from '@/lib/localized-content';
 import { createEventId, trackClientEvent, trackLead } from '@/lib/tracking/client';
+import { trackAnalyticsEvent } from '@/lib/analytics/client';
 
 export default function ProductPage() {
   const params = useParams();
@@ -60,6 +61,13 @@ export default function ProductPage() {
       value: product.price,
       productSlug: product.slug,
       productName: lp.marketingName,
+      quantity: 1,
+    });
+    void trackAnalyticsEvent({
+      type: 'ViewContent',
+      productSlug: product.slug,
+      productName: lp.marketingName,
+      value: product.price,
       quantity: 1,
     });
   }, [product, lp.marketingName]);

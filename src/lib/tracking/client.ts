@@ -96,9 +96,10 @@ export async function trackLead(payload: LeadPayload) {
   trackClientEvent(payload);
 
   try {
+    const { analyticsHeaders } = await import('@/lib/analytics/client');
     await fetch('/api/lead', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...analyticsHeaders() },
       body: JSON.stringify(payload),
       keepalive: true,
     });
