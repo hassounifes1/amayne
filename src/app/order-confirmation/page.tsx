@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { CheckCircle, Truck, Clock, MessageCircle, ArrowRight, Star, Gift, Zap } from 'lucide-react';
 import { products, getProductBySlug } from '@/lib/data';
 import { useEffect, useState, Suspense } from 'react';
+import { createEventId, markTracked, trackLead, wasTracked } from '@/lib/tracking/client';
 import { useLanguage } from '@/context/LanguageProvider';
 
 function ConfirmationContent() {
@@ -19,6 +20,8 @@ function ConfirmationContent() {
   const quantity = searchParams.get('quantity') || '1';
   const total = Number(searchParams.get('total')) || 0;
   const crossSellParam = searchParams.get('crossSell') || '';
+  const phone = searchParams.get('phone') || '';
+  const leadEventId = searchParams.get('eid') || '';
 
   const [visible, setVisible] = useState(false);
   const [countdown, setCountdown] = useState(15 * 60);
@@ -27,6 +30,31 @@ function ConfirmationContent() {
     const t = setTimeout(() => setVisible(true), 100);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    if (!orderNumber || total <= 0) return;
+    const storageKey = `amayno_purchase_${orderNumber}`;
+    if (wasTracked(storageKey)) return;
+
+    const purchaseEventId = createEventId();
+    void trackLead({
+      eventName: 'Purchase',
+      eventId: purchaseEventId,
+      orderId: orderNumber,
+      value: total,
+      name: customerName || undefined,
+      phone: phone || undefined,
+      city: city || undefined,
+      productSlug: productSlug || undefined,
+      productName: productName || undefined,
+      quantity: Number(quantity) || 1,
+      sourceUrl: typeof window !== 'undefined' ? window.location.href : undefined,
+    }).finally(() => markTracked(storageKey));
+
+    if (leadEventId) {
+      markTracked(`amayno_lead_${leadEventId}`);
+    }
+  }, [orderNumber, total, customerName, phone, city, productSlug, productName, quantity, leadEventId]);
 
   useEffect(() => {
     const timer = setInterval(() => {

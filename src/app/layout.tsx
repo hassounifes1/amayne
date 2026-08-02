@@ -4,6 +4,7 @@ import Providers from '@/components/Providers';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
+import Analytics from '@/components/Analytics';
 
 export const metadata: Metadata = {
   title: 'AMAYNO — Amlou Authentique du Souss | Livraison Gratuite Maroc',
@@ -32,6 +33,7 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body className="min-h-screen flex flex-col antialiased overflow-x-hidden">
+        <Analytics />
         <Providers>
           <Navbar />
           <CartDrawer />

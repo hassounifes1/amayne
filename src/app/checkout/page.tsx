@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ChevronRight, Truck, Shield, CreditCard, MapPin, User, Phone } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { CITIES, getPriceForWeight } from '@/lib/data';
+import { createEventId, trackLead } from '@/lib/tracking/client';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -32,9 +33,29 @@ export default function CheckoutPage() {
     e.preventDefault();
     if (!validate()) return;
     const orderId = `AMY-${Date.now().toString(36).toUpperCase()}`;
+    const eventId = createEventId();
+
+    void trackLead({
+      eventName: 'Lead',
+      eventId,
+      orderId,
+      value: total,
+      name: form.name,
+      phone: form.phone,
+      city: form.city,
+      quantity: items.length,
+      sourceUrl: typeof window !== 'undefined' ? window.location.href : undefined,
+      items: items.map(item => ({
+        slug: item.product.slug,
+        name: item.product.marketingName,
+        quantity: item.quantity,
+        price: getPriceForWeight(item.product, item.weight),
+      })),
+    });
+
     clearCart();
     router.push(
-      `/order-confirmation?order=${encodeURIComponent(orderId)}&name=${encodeURIComponent(form.name)}&city=${encodeURIComponent(form.city)}&total=${total}&items=${items.length}`
+      `/order-confirmation?order=${encodeURIComponent(orderId)}&eid=${encodeURIComponent(eventId)}&name=${encodeURIComponent(form.name)}&phone=${encodeURIComponent(form.phone)}&city=${encodeURIComponent(form.city)}&total=${total}&items=${items.length}`
     );
   };
 

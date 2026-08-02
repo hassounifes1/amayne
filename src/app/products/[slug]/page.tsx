@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Star, Truck, Shield, Leaf, ChevronRight, Minus, Plus, ArrowUp, ArrowDown, Sparkles } from 'lucide-react';
@@ -14,6 +14,7 @@ import {
 } from '@/lib/data';
 import { useLanguage } from '@/context/LanguageProvider';
 import { localizeCity, localizeProduct } from '@/lib/localized-content';
+import { createEventId, trackClientEvent, trackLead } from '@/lib/tracking/client';
 
 export default function ProductPage() {
   const params = useParams();
@@ -50,6 +51,19 @@ export default function ProductPage() {
   const upsellLp = upsell ? localizeProduct(upsell, lang) : null;
   const downsellLp = downsell ? localizeProduct(downsell, lang) : null;
 
+  useEffect(() => {
+    if (!product) return;
+    trackClientEvent({
+      eventName: 'ViewContent',
+      eventId: createEventId(),
+      orderId: `view-${product.slug}`,
+      value: product.price,
+      productSlug: product.slug,
+      productName: lp.marketingName,
+      quantity: 1,
+    });
+  }, [product, lp.marketingName]);
+
   const validate = () => {
     const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = t('err_name');
@@ -65,10 +79,26 @@ export default function ProductPage() {
     setSubmitting(true);
 
     const orderId = `AMY-${Date.now().toString(36).toUpperCase()}`;
+    const eventId = createEventId();
     const crossSellSlugs = crossSell.slice(0, 3).map(p => p.slug).join(',');
+
+    void trackLead({
+      eventName: 'Lead',
+      eventId,
+      orderId,
+      value: totalPrice,
+      name: form.name,
+      phone: form.phone,
+      city: form.city,
+      productSlug: product.slug,
+      productName: lp.marketingName,
+      quantity,
+      sourceUrl: typeof window !== 'undefined' ? window.location.href : undefined,
+    });
 
     router.push(
       `/order-confirmation?order=${encodeURIComponent(orderId)}` +
+      `&eid=${encodeURIComponent(eventId)}` +
       `&name=${encodeURIComponent(form.name)}` +
       `&phone=${encodeURIComponent(form.phone)}` +
       `&city=${encodeURIComponent(form.city)}` +

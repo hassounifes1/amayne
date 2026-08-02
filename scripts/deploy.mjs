@@ -3,11 +3,22 @@
  *
  * Usage:
  *   node scripts/deploy.mjs
+ *   node scripts/deploy.mjs --service bakanadamayno
  */
 import { spawnSync } from 'child_process';
 
-const webhook =
-  'http://76.13.44.104:3000/api/deploy/1aa318f758120af5103cb26115d21794eb7571e6846379ed';
+const webhooks = {
+  amayne:
+    'http://76.13.44.104:3000/api/deploy/1aa318f758120af5103cb26115d21794eb7571e6846379ed',
+  bakanadamayno:
+    'http://76.13.44.104:3000/api/deploy/4aff8ce4f62e2fe721eee40044a3c3eb45d4607acf5d5cb3',
+};
+
+const service = process.argv.includes('--service')
+  ? process.argv[process.argv.indexOf('--service') + 1]
+  : 'bakanadamayno';
+
+const webhook = webhooks[service] || webhooks.bakanadamayno;
 
 const result = spawnSync(
   'curl',
@@ -23,5 +34,6 @@ if (result.status !== 0) {
   process.exit(result.status ?? 1);
 }
 
-console.log('\nEasypanel redeploy triggered. Check Deployments → Logs in the panel.');
-console.log('App port must be 3000. Domain DNS must point to 76.13.44.104 for amayno.ma.');
+console.log(`\nEasypanel redeploy triggered (${service}).`);
+console.log('Source must be: https://github.com/hassounifes1/amayne branch main');
+console.log('App port: 3000 · Build: Dockerfile');
